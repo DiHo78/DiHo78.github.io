@@ -1,0 +1,3 @@
+# Lints the content; run `markdownlint-cli2` from the repo root.
+globs:
+  - "content/**/*.md"

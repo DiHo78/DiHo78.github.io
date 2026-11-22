@@ -1,0 +1,8 @@
+# Internal links, images and anchors of the built site; external links are #5.
+DirectoryPath: public
+CheckExternal: false
+CheckInternal: true
+CheckInternalHash: true
+CheckImages: true
+EnforceHTTPS: false
+OutputDir: tmp/.htmltest

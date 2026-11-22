@@ -1,0 +1,4 @@
+{{- /* Stack v4.0.3 head/style.html with Dart Sass instead of the deprecated libsass (toCSS), which fails `hugo --panicOnWarning`. Stack's SCSS still uses @import and global built-ins, so those two deprecations are silenced. */ -}}
+{{ $sass := resources.Get "scss/style.scss" }}
+{{ $style := $sass | css.Sass (dict "transpiler" "dartsass" "silenceDeprecations" (slice "import" "global-builtin")) | minify | resources.Fingerprint "sha256" }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}">

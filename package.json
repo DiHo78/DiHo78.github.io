@@ -1,0 +1,8 @@
+{
+  "name": "blog",
+  "private": true,
+  "description": "Linter for the blog content; versions pinned in package-lock.json.",
+  "devDependencies": {
+    "markdownlint-cli2": "0.24.2"
+  }
+}

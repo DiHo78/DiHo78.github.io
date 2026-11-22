@@ -1,0 +1,14 @@
+# The WordPress export (XML, or the zip WordPress.com sends) holds commenters'
+# e-mail and IP addresses: it never enters the repo (ADR 0001).
+*.xml
+*.zip
+!layouts/**/*.xml
+
+# Hugo's build output and caches
+/public/
+/resources/
+/.hugo_build.lock
+
+# Tool output
+/node_modules/
+/tmp/

@@ -80,14 +80,15 @@
 }
 
 // Stack draws the menu button in the card's text colour, dark on the coal
-// ground; ember once the menu is open.
+// ground, and in the slate accent once the menu is open; here the ground's
+// text colour, and ember when open. The id matches Stack's selector.
 .hamburger-inner,
 .hamburger-inner::before,
 .hamburger-inner::after {
     background-color: var(--body-text-color);
 }
 
-.hamburger.is-active {
+#toggle-menu.is-active {
     .hamburger-inner,
     .hamburger-inner::before,
     .hamburger-inner::after {

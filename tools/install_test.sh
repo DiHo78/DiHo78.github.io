@@ -18,6 +18,16 @@ sh "$install" "$root/home" go >/dev/null 2>&1
 [ $? -ne 0 ] && [ -f "$root/home/go/keep" ] && [ ! -e "$root/home/bin" ]
 check $? "refuses a non-empty folder it did not create"
 
+# A folder it cannot list counts as not empty.
+mkdir -p "$root/noread/go"
+touch "$root/noread/go/keep"
+chmod 300 "$root/noread"
+sh "$install" "$root/noread" nosuchtool >/dev/null 2>&1
+rc=$?
+chmod 700 "$root/noread"
+[ $rc -ne 0 ] && [ -f "$root/noread/go/keep" ] && [ ! -e "$root/noread/bin" ]
+check $? "refuses a folder it cannot read"
+
 # An empty <dir> never falls back to the working folder.
 mkdir -p "$root/cwd/go"
 touch "$root/cwd/go/keep"

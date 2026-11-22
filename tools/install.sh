@@ -36,8 +36,9 @@ case $dir in
 esac
 # The script replaces folders in <dir>: only in one it created itself.
 marker=.installed-by-tools-install-sh
-if [ ! -f "$dir/$marker" ] && [ -n "$(ls -A "$dir")" ]; then
-  echo "refused: $dir is not empty and was not created by tools/install.sh" >&2; exit 2
+if [ ! -f "$dir/$marker" ]; then
+  entries=$(ls -A "$dir") || { echo "refused: cannot list $dir" >&2; exit 2; }
+  [ -z "$entries" ] || { echo "refused: $dir is not empty and was not created by tools/install.sh" >&2; exit 2; }
 fi
 mkdir -p "$dir/bin"
 touch "$dir/$marker"

@@ -1,0 +1,6 @@
+# PhotoSwipe from the site itself instead of cdn.jsdelivr.net (#4); see
+# static/vendor/photoswipe/README.md. Hugo merges this file with Stack's.
+[PhotoSwipe]
+    Style    = "/vendor/photoswipe/photoswipe.css"
+    Core     = "/vendor/photoswipe/photoswipe.esm.min.js"
+    Lightbox = "/vendor/photoswipe/photoswipe-lightbox.esm.min.js"

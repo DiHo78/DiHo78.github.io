@@ -1,1 +1,3 @@
 * text=auto eol=lf
+# Vendored files stay byte-identical to their source, so their SHA-256 holds.
+static/vendor/** -text

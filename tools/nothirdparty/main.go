@@ -27,6 +27,12 @@ var (
 	tag     = regexp.MustCompile(`<([a-zA-Z][a-zA-Z0-9:-]*)((?:[^>"']|"[^"]*"|'[^']*')*)>`)
 	attr    = regexp.MustCompile(`([^\s"'>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+)))?`)
 
+	scriptElement = regexp.MustCompile(`(?is)<script\b((?:[^>"']|"[^"]*"|'[^']*')*)>(.*?)</script>`)
+	// An absolute or protocol-relative URL in a JS string literal.
+	scriptURL   = regexp.MustCompile("[\"'`]((?:[a-zA-Z][a-zA-Z0-9+.-]*:)?//[^\"'`\\s]*)")
+	jsSlash     = regexp.MustCompile(`(?i)\\(?:/|u002f|x2f)`)
+	leadSlashes = regexp.MustCompile(`^([a-zA-Z][a-zA-Z0-9+.-]*:)?/{2,}`)
+
 	styleElement = regexp.MustCompile(`(?is)<style\b[^>]*>(.*?)</style>`)
 	cssURL       = regexp.MustCompile(`(?i)url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s"']*))\s*\)`)
 	cssImport    = regexp.MustCompile(`(?i)@import\s+(?:"([^"]*)"|'([^']*)')`)
@@ -92,6 +98,9 @@ func htmlLoads(page string) []string {
 	for _, m := range styleElement.FindAllStringSubmatch(page, -1) {
 		urls = append(urls, cssLoads(m[1])...)
 	}
+	for _, m := range scriptElement.FindAllStringSubmatch(page, -1) {
+		urls = append(urls, scriptLoads(m[1], m[2])...)
+	}
 	for _, t := range tag.FindAllStringSubmatch(page, -1) {
 		name := strings.ToLower(t[1])
 		matches := attr.FindAllStringSubmatch(t[2], -1)
@@ -104,7 +113,7 @@ func htmlLoads(page string) []string {
 		for _, a := range matches {
 			value := html.UnescapeString(a[2] + a[3] + a[4])
 			switch strings.ToLower(a[1]) {
-			case "src", "poster", "data":
+			case "src", "poster", "data", "background":
 				urls = append(urls, value)
 			case "srcset", "imagesrcset":
 				for _, candidate := range strings.Split(value, ",") {
@@ -149,14 +158,41 @@ func cssLoads(css string) []string {
 	return urls
 }
 
-// external reports whether u names a host other than own's, or another scheme.
+// scriptLoads returns the absolute and protocol-relative URL literals of an
+// inline script; a JSON data block runs nothing and is skipped.
+func scriptLoads(attrs, script string) []string {
+	for _, a := range attr.FindAllStringSubmatch(attrs, -1) {
+		if strings.EqualFold(a[1], "type") {
+			switch strings.ToLower(strings.TrimSpace(a[2] + a[3] + a[4])) {
+			case "application/ld+json", "application/json":
+				return nil
+			}
+		}
+	}
+	var urls []string
+	for _, m := range scriptURL.FindAllStringSubmatch(jsSlash.ReplaceAllString(script, "/"), -1) {
+		urls = append(urls, m[1])
+	}
+	return urls
+}
+
+// external reports whether a browser on own loads u from another origin. As
+// a browser does, it drops tabs and newlines, reads a backslash as a slash
+// and any run of two or more slashes as the start of a host.
 func external(u string, own *url.URL) bool {
-	parsed, err := url.Parse(strings.TrimSpace(u))
+	u = strings.NewReplacer("\t", "", "\n", "", "\r", "", `\`, "/").Replace(strings.TrimSpace(u))
+	u = leadSlashes.ReplaceAllString(u, "$1//")
+	parsed, err := url.Parse(u)
 	if err != nil {
 		return true
 	}
-	if parsed.Host == "" {
-		return false
+	if parsed.Scheme != "" && parsed.Scheme != own.Scheme {
+		// Another scheme: a host even without slashes, e.g. http:cdn.example.com.
+		switch parsed.Scheme {
+		case "data", "blob", "about":
+			return false
+		}
+		return true
 	}
-	return parsed.Scheme != "" && parsed.Scheme != own.Scheme || !strings.EqualFold(parsed.Host, own.Host)
+	return parsed.Host != "" && !strings.EqualFold(parsed.Host, own.Host)
 }

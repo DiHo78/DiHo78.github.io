@@ -1,5 +1,4 @@
 baseURL: https://diho78.github.io/
-title: Blog
 locale: en-us
 defaultContentLanguage: en
 module:
@@ -32,7 +31,7 @@ params:
   footer:
     since: 2010
   sidebar:
-    subtitle: SQL Server, PowerShell, SQL Community
+    subtitle: Hin und wieder ein paar Gedanken zu SQL Server oder Azure (und manchmal auch Privates)
   widgets:
     homepage:
       - type: archives

@@ -1,0 +1,19 @@
+{{- /* Stack v4.0.3 data/title.html (GPL-3.0); one change: a page other than the home page ends with the site title (#16). */ -}}
+{{- $pageTitle := .Title -}}
+{{- $siteTitle := .Site.Title -}}
+{{- $paginator := partial "helper/paginator.html" . -}}
+
+{{- $title := slice -}}
+
+{{- if and $paginator $paginator.HasPrev -}}
+    <!-- Add page number-->
+    {{ $title = $title | append (printf "Page %d" $paginator.PageNumber) }}
+{{- end -}}
+
+{{- $title = $title | append (default $siteTitle $pageTitle) -}}
+
+{{- if and (not .IsHome) $pageTitle (ne $pageTitle $siteTitle) -}}
+    {{ $title = $title | append $siteTitle }}
+{{- end -}}
+
+{{ return delimit $title " - " }}

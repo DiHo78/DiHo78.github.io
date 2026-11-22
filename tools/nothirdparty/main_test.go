@@ -152,3 +152,75 @@ func TestErrors(t *testing.T) {
 		})
 	}
 }
+
+func TestScriptFileFails(t *testing.T) {
+	dir := site(t, map[string]string{
+		"index.html": page(`<script type="module" src="/js/app.js"></script>`, ""),
+		"js/app.js": `/*! Lib 1.0 - https://lib.example.com */
+// see https://docs.example.com/x
+const re = /["']/g, path = "a//b", half = 1 / 2;
+import("https://cdn.example.com/x.js"); s.src = "https:\/\/cdn.example.com\/y.js";
+const t = ` + "`//cdn.example.com/z.js`" + `; const own = "/js/other.js", own2 = "https://diho78.github.io/a.js";
+const scheme = 'http:cdn.example.com/w.js'; // done
+`,
+	})
+	code, out, _ := check(dir)
+	want := "js/app.js: https://cdn.example.com/x.js\njs/app.js: https://cdn.example.com/y.js\njs/app.js: //cdn.example.com/z.js\njs/app.js: http:cdn.example.com/w.js\n"
+	if code != 1 || out != want {
+		t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
+	}
+}
+
+func TestScriptCommentsPass(t *testing.T) {
+	dir := site(t, map[string]string{
+		"index.html": page(`<script>/* https://cdn.example.com/a.js */ // https://cdn.example.com/b.js
+var note = "Note: x";</script>`, ""),
+		"js/lib.js": "/*!\n  * Lib 5.4.4 - https://lib.example.com\n  * (c) 2024\n  */\nfunction t(a){return a.replace(/\\/\\//g,\"/\")}export{t as default};\n",
+	})
+	code, out, errOut := check(dir)
+	if code != 0 || out != "" || errOut != "" {
+		t.Fatalf("code %d, stdout %q, stderr %q; want 0 and no output", code, out, errOut)
+	}
+}
+
+func TestImageSetFails(t *testing.T) {
+	dir := site(t, map[string]string{
+		"index.html":     page(`<style>body{background-image:image-set("https://cdn.example.com/a.png" 1x)}</style>`, `<div style="background-image: image-set('https://cdn.example.com/b.png' 2x)"></div>`),
+		"scss/style.css": `.x{content:"Note: x";font-family:"Lato"}.y{background-image:image-set("//cdn.example.com/c.png" 1x, url(/d.png) 2x)}`,
+	})
+	code, out, _ := check(dir)
+	want := "index.html: https://cdn.example.com/a.png\nindex.html: https://cdn.example.com/b.png\nscss/style.css: //cdn.example.com/c.png\n"
+	if code != 1 || out != want {
+		t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
+	}
+}
+
+func TestCommentOpenerOutsideCommentFails(t *testing.T) {
+	cases := map[string]string{
+		"in an attribute": `<img alt="<!--" src="/a.png"><script src="https://cdn.example.com/x.js"></script><p title="-->"></p>`,
+		"in script text":  `<script>var a="<!--";</script><script src="https://cdn.example.com/x.js"></script><script>var b="-->";</script>`,
+		"in a title":      `<title><!--</title><script src="https://cdn.example.com/x.js"></script><p>--></p>`,
+	}
+	for name, body := range cases {
+		t.Run(name, func(t *testing.T) {
+			code, out, _ := check(site(t, map[string]string{"index.html": page("", body)}))
+			want := "index.html: https://cdn.example.com/x.js\n"
+			if code != 1 || out != want {
+				t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
+			}
+		})
+	}
+}
+
+func TestSVGFileFails(t *testing.T) {
+	dir := site(t, map[string]string{
+		"index.html":  page("", `<object data="/img/a.svg"></object>`),
+		"img/a.svg":   `<svg xmlns="http://www.w3.org/2000/svg"><image href="https://cdn.example.com/a.png"/></svg>`,
+		"img/own.svg": `<svg xmlns="http://www.w3.org/2000/svg"><use href="#i"/></svg>`,
+	})
+	code, out, _ := check(dir)
+	want := "img/a.svg: https://cdn.example.com/a.png\n"
+	if code != 1 || out != want {
+		t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
+	}
+}

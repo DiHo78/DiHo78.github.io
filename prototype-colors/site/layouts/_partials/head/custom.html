@@ -1,0 +1,14 @@
+{{- /* PROTOTYPE: pick the palette before first paint, so switching pages does not flash Stack's defaults.
+   ?palette=a..e and ?scheme=light|dark in the URL win and are remembered. */ -}}
+<script>
+    (function () {
+        var q = new URLSearchParams(location.search), p = 'a';
+        try {
+            if (/^[a-e]$/.test(q.get('palette') || '')) localStorage.setItem('ProtoPalette', q.get('palette'));
+            if (/^(light|dark)$/.test(q.get('scheme') || '')) localStorage.setItem('StackColorScheme', q.get('scheme'));
+            p = localStorage.getItem('ProtoPalette') || 'a';
+        } catch (e) {}
+        document.documentElement.dataset.palette = p;
+        if (/^(light|dark)$/.test(q.get('scheme') || '')) document.documentElement.dataset.scheme = q.get('scheme');
+    })();
+</script>

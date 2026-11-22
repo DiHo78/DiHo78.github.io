@@ -1,0 +1,91 @@
+{
+ "variants": [
+  {
+   "id": "a",
+   "name": "Blaue Stunde",
+   "origin": "Kanalblau, Wasserspiegel an der Kokerei; dein Dunkelblau"
+  },
+  {
+   "id": "b",
+   "name": "Zollverein",
+   "origin": "Stahlträger-Rotbraun (#5a3530); dunkel: oxidiertes Rohr (#e1866a)"
+  },
+  {
+   "id": "c",
+   "name": "Grünzug",
+   "origin": "Gedecktes Moos- und Olivgrün; Felder, Wiesen, Wälder vom Rad aus"
+  },
+  {
+   "id": "d",
+   "name": "Goldene Stunde",
+   "origin": "Bernstein vom Kleinen Fuchs (#ae701a) auf kühlem Grau; dunkel: blaue Stunde"
+  },
+  {
+   "id": "e",
+   "name": "Dompfaff",
+   "origin": "Brust ziegelrosa, Rücken blaugrau, Kappe schwarz (geschätzt)"
+  }
+ ],
+ "checks": [
+  {
+   "fg": "card-text-color-main",
+   "bg": "card-background",
+   "target": 7.0,
+   "label": "Text auf Karte"
+  },
+  {
+   "fg": "card-text-color-secondary",
+   "bg": "card-background",
+   "target": 4.5,
+   "label": "Text sekundär"
+  },
+  {
+   "fg": "card-text-color-tertiary",
+   "bg": "card-background",
+   "target": 4.5,
+   "label": "Metadaten"
+  },
+  {
+   "fg": "body-text-color",
+   "bg": "body-background",
+   "target": 4.5,
+   "label": "Seitenleiste"
+  },
+  {
+   "fg": "accent-color",
+   "bg": "card-background",
+   "target": 4.5,
+   "label": "Link auf Karte"
+  },
+  {
+   "fg": "accent-color",
+   "bg": "body-background",
+   "target": 4.5,
+   "label": "Link auf Grund"
+  },
+  {
+   "fg": "accent-color-darker",
+   "bg": "card-background",
+   "target": 4.5,
+   "label": "Link Hover"
+  },
+  {
+   "fg": "accent-color-text",
+   "bg": "accent-color",
+   "target": 4.5,
+   "label": "Tag-Text"
+  },
+  {
+   "fg": "accent-color-text",
+   "bg": "accent-color-darker",
+   "target": 4.5,
+   "label": "Tag Hover"
+  },
+  {
+   "fg": "code-text-color",
+   "bg": "code-background-color",
+   "target": 4.5,
+   "label": "Inline-Code"
+  }
+ ]
+}

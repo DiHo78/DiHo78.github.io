@@ -1,0 +1,51 @@
+# PROTOTYPE, throwaway: Stack with five switchable accent palettes (scripts/palettes.py).
+baseURL: http://localhost:1316/
+title: Blog prototype
+locale: en-us
+defaultContentLanguage: en
+module:
+  imports:
+    - path: github.com/CaiJimmy/hugo-theme-stack/v4
+taxonomies:
+  category: categories
+  tag: tags
+permalinks:
+  page:
+    posts: /:slug/
+  term:
+    categories: /category/:slug/
+    tags: /tag/:slug/
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+    codeFences: true
+    guessSyntax: false
+    lineNos: false
+params:
+  mainSections: [posts]
+  rssFullContent: true
+  comments:
+    enabled: false
+  colorScheme:
+    toggle: true
+    default: auto
+  footer:
+    since: 2010
+  sidebar:
+    subtitle: SQL Server, PowerShell, SQL Community
+    avatar: img/avatar.jpg
+  article:
+    readingTime: true
+  widgets:
+    homepage:
+      - type: archives
+        params: {limit: 5}
+      - type: categories
+        params: {limit: 10}
+      - type: tag-cloud
+        params: {limit: 10}
+    page:
+      - type: toc

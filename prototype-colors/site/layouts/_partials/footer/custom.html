@@ -1,0 +1,80 @@
+{{- /* PROTOTYPE: bottom bar to switch palette and scheme; shows the measured contrast of the live tokens. */ -}}
+<div id="proto-bar" role="region" aria-label="Farb-Prototyp">
+    <div class="proto-row">
+        <span class="proto-label">Palette</span>
+        {{ range hugo.Data.palettes.variants }}
+        <button type="button" class="proto-btn" data-set-palette="{{ .id }}" aria-pressed="false">{{ upper .id }} {{ .name }}</button>
+        {{ end }}
+        <span class="proto-sep"></span>
+        <span class="proto-label">Modus</span>
+        <button type="button" class="proto-btn" data-set-scheme="light" aria-pressed="false">Hell</button>
+        <button type="button" class="proto-btn" data-set-scheme="dark" aria-pressed="false">Dunkel</button>
+        <button type="button" class="proto-btn proto-hide" aria-expanded="true" aria-controls="proto-details">Leiste einklappen</button>
+    </div>
+    <div id="proto-details">
+        <p class="proto-origin"></p>
+        <ul class="proto-checks"></ul>
+        <p class="proto-note">Avatar: Ausschnitt aus einem eigenen Foto, Zeche Zollverein.</p>
+    </div>
+</div>
+<style>
+    #proto-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000; padding: 10px 16px;
+        background: var(--card-background); color: var(--card-text-color-main);
+        border-top: 1px solid var(--card-separator-color); box-shadow: 0 -4px 16px rgba(0,0,0,.12);
+        font-size: 1.3rem; line-height: 1.4; }
+    #proto-bar .proto-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    #proto-bar .proto-label { color: var(--card-text-color-secondary); font-weight: 700; margin-right: 2px; }
+    #proto-bar .proto-sep { width: 12px; }
+    #proto-bar .proto-btn { font: inherit; cursor: pointer; padding: 5px 10px; border-radius: 6px;
+        border: 1px solid var(--card-separator-color); background: var(--card-background); color: var(--card-text-color-main); }
+    #proto-bar .proto-btn[aria-pressed="true"] { background: var(--accent-color); color: var(--accent-color-text); border-color: var(--accent-color); }
+    #proto-bar .proto-hide { margin-left: auto; }
+    #proto-bar .proto-origin { margin: 8px 0 4px; color: var(--card-text-color-secondary); }
+    #proto-bar .proto-checks { display: flex; flex-wrap: wrap; gap: 4px 14px; list-style: none; margin: 0; padding: 0; }
+    #proto-bar .proto-checks .fail { color: #b00020; font-weight: 700; }
+    #proto-bar .proto-note { margin: 4px 0 0; color: var(--card-text-color-tertiary); }
+    #proto-bar.collapsed #proto-details { display: none; }
+</style>
+<script>
+(function () {
+    var DATA = {{ hugo.Data.palettes | jsonify | safeJS }};
+    var root = document.documentElement, bar = document.getElementById('proto-bar');
+    var canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
+    var ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    function rgb(css) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = '#000'; ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1);
+        var d = ctx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; }
+    function lum(c) { return c.map(function (v) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); })
+        .reduce(function (s, v, i) { return s + v * [0.2126, 0.7152, 0.0722][i]; }, 0); }
+    function ratio(a, b) { var x = lum(rgb(a)), y = lum(rgb(b)); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+    function token(n) { return getComputedStyle(root).getPropertyValue('--' + n).trim(); }
+
+    function render() {
+        var p = root.dataset.palette, s = root.dataset.scheme;
+        bar.querySelectorAll('[data-set-palette]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.setPalette === p)); });
+        bar.querySelectorAll('[data-set-scheme]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.setScheme === s)); });
+        var v = DATA.variants.filter(function (x) { return x.id === p; })[0];
+        bar.querySelector('.proto-origin').textContent = v ? v.name + ': ' + v.origin : '';
+        var ul = bar.querySelector('.proto-checks'); ul.innerHTML = '';
+        DATA.checks.forEach(function (c) {
+            var r = ratio(token(c.fg), token(c.bg)), li = document.createElement('li');
+            li.textContent = c.label + ' ' + r.toFixed(1) + ':1 ' + (r >= c.target ? '✓' : '✗ (min ' + c.target + ')');
+            if (r < c.target) li.className = 'fail';
+            ul.appendChild(li);
+        });
+    }
+
+    bar.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        if (b.dataset.setPalette) { root.dataset.palette = b.dataset.setPalette; try { localStorage.setItem('ProtoPalette', b.dataset.setPalette); } catch (x) {} }
+        if (b.dataset.setScheme) { root.dataset.scheme = b.dataset.setScheme; try { localStorage.setItem('StackColorScheme', b.dataset.setScheme); } catch (x) {} }
+        if (b.classList.contains('proto-hide')) {
+            var c = bar.classList.toggle('collapsed'); b.setAttribute('aria-expanded', String(!c));
+            b.textContent = c ? 'Leiste ausklappen' : 'Leiste einklappen';
+        }
+        requestAnimationFrame(render);
+    });
+    window.addEventListener('onColorSchemeChange', function () { requestAnimationFrame(render); });
+    render();
+})();
+</script>

@@ -1,0 +1,144 @@
+# PROTOTYPE, throwaway: derive the five palettes and write site/assets/scss/custom.scss + site/data/palettes.json.
+# usage (from prototype-colors/): python3 -I scripts/palettes.py
+# Every token is OKLCH; lightness is nudged until each contrast pair in CHECKS meets its WCAG target.
+import json, os, sys
+sys.path.insert(0, os.path.dirname(__file__))
+from oklch import oklch, contrast
+
+# hue/chroma come from the measured photo anchors (REPORT.md); the bullfinch is estimated, not measured
+VARIANTS = [
+    dict(id='a', light_L=0.48, name='Blaue Stunde', origin='Kanalblau, Wasserspiegel an der Kokerei; dein Dunkelblau',
+         neutral=(250, 0.010), accent=(248, 0.10), dark_neutral=(252, 0.022), dark_accent=(235, 0.085)),
+    dict(id='b', light_L=0.42, name='Zollverein', origin='Stahlträger-Rotbraun (#5a3530); dunkel: oxidiertes Rohr (#e1866a)',
+         neutral=(60, 0.008), accent=(28, 0.095), dark_neutral=(60, 0.010), dark_accent=(38, 0.115)),
+    dict(id='c', light_L=0.46, name='Grünzug', origin='Gedecktes Moos- und Olivgrün; Felder, Wiesen, Wälder vom Rad aus',
+         neutral=(135, 0.009), accent=(138, 0.085), dark_neutral=(155, 0.016), dark_accent=(135, 0.075)),
+    dict(id='d', light_L=0.53, name='Goldene Stunde', origin='Bernstein vom Kleinen Fuchs (#ae701a) auf kühlem Grau; dunkel: blaue Stunde',
+         neutral=(250, 0.006), accent=(66, 0.120), dark_neutral=(255, 0.026), dark_accent=(72, 0.120)),
+    dict(id='e', light_L=0.52, name='Dompfaff', origin='Brust ziegelrosa, Rücken blaugrau, Kappe schwarz (geschätzt)',
+         neutral=(250, 0.014), accent=(24, 0.135), dark_neutral=(250, 0.018), dark_accent=(24, 0.105)),
+]
+
+# (foreground, background, minimum ratio, label)
+CHECKS = [
+    ('card-text-color-main', 'card-background', 7.0, 'Text auf Karte'),
+    ('card-text-color-secondary', 'card-background', 4.5, 'Text sekundär'),
+    ('card-text-color-tertiary', 'card-background', 4.5, 'Metadaten'),
+    ('body-text-color', 'body-background', 4.5, 'Seitenleiste'),
+    ('accent-color', 'card-background', 4.5, 'Link auf Karte'),
+    ('accent-color', 'body-background', 4.5, 'Link auf Grund'),
+    ('accent-color-darker', 'card-background', 4.5, 'Link Hover'),
+    ('accent-color-text', 'accent-color', 4.5, 'Tag-Text'),
+    ('accent-color-text', 'accent-color-darker', 4.5, 'Tag Hover'),
+    ('code-text-color', 'code-background-color', 4.5, 'Inline-Code'),
+]
+
+def light(v):
+    nh, nc = v['neutral']; ah, ac = v['accent']
+    t = {
+        'body-background': oklch(0.945, nc, nh),
+        'card-background': oklch(0.995, nc * 0.3, nh),
+        'card-background-selected': oklch(0.925, nc * 1.5, nh),
+        'card-text-color-main': oklch(0.24, nc * 1.5, nh),
+        'card-text-color-secondary': oklch(0.42, nc * 1.5, nh),
+        'card-text-color-tertiary': oklch(0.48, nc * 1.5, nh),
+        'card-separator-color': oklch(0.90, nc, nh),
+        'body-text-color': oklch(0.40, nc * 1.5, nh),
+        'accent-color-text': '#ffffff',
+        'code-background-color': oklch(0.93, ac * 0.18, ah),
+        'code-text-color': oklch(0.36, ac * 0.6, ah),
+        'blockquote-background-color': oklch(0.965, nc, nh),
+        'tr-even-background-color': oklch(0.965, nc, nh),
+        'table-border-color': oklch(0.86, nc, nh),
+    }
+    L = v['light_L']
+    while True:  # darken the accent until links and tags pass on white card and tinted ground
+        t['accent-color'] = oklch(L, ac, ah)
+        t['accent-color-darker'] = oklch(L - 0.07, ac, ah)
+        if (contrast(t['accent-color'], t['body-background']) >= 4.6 and
+                contrast(t['accent-color-text'], t['accent-color']) >= 4.6):
+            break
+        L -= 0.005
+    t['link-underline'] = oklch(0.84, ac * 0.45, ah)
+    return t, L
+
+def dark(v):
+    nh, nc = v['dark_neutral']; ah, ac = v['dark_accent']
+    t = {
+        'body-background': oklch(0.195, nc, nh),
+        'card-background': oklch(0.245, nc, nh),
+        'card-background-selected': oklch(0.30, nc, nh),
+        'card-text-color-main': oklch(0.94, nc * 0.4, nh),
+        'card-text-color-secondary': oklch(0.82, nc * 0.5, nh),
+        'card-text-color-tertiary': oklch(0.74, nc * 0.5, nh),
+        'card-separator-color': oklch(0.33, nc, nh),
+        'body-text-color': oklch(0.80, nc * 0.5, nh),
+        'accent-color-text': oklch(0.18, nc, nh),
+        'code-background-color': oklch(0.17, nc, nh),
+        'code-text-color': oklch(0.88, ac * 0.4, ah),
+        'blockquote-background-color': oklch(0.28, nc, nh),
+        'tr-even-background-color': oklch(0.28, nc, nh),
+        'table-border-color': oklch(0.40, nc, nh),
+    }
+    L = 0.70
+    while True:  # lighten the accent until links pass on the card and its hover still carries dark tag text
+        t['accent-color'] = oklch(L, ac, ah)
+        t['accent-color-darker'] = oklch(L - 0.06, ac, ah)
+        if (contrast(t['accent-color'], t['card-background']) >= 4.6 and
+                contrast(t['accent-color-text'], t['accent-color-darker']) >= 4.6):
+            break
+        L += 0.005
+    t['link-underline'] = oklch(0.45, ac * 0.6, ah)
+    return t, L
+
+def rgb_triple(h):
+    h = h.lstrip('#'); return ', '.join(str(int(h[i:i + 2], 16)) for i in (0, 2, 4))
+
+def block(sel, t):
+    lines = [sel + ' {']
+    for k, v in t.items():
+        if k == 'link-underline':
+            lines.append(f'    --link-background-color: {rgb_triple(v)};')
+        else:
+            lines.append(f'    --{k}: {v};')
+    return '\n'.join(lines + ['}'])
+
+out, data, fail = [], [], 0
+for v in VARIANTS:
+    for scheme, (t, L) in (('light', light(v)), ('dark', dark(v))):
+        sel = f':root[data-palette="{v["id"]}"]' + ('[data-scheme="dark"]' if scheme == 'dark' else '')
+        out.append(block(sel, t))
+        for fg, bg, target, label in CHECKS:
+            r = contrast(t[fg], t[bg])
+            if r < target:
+                fail += 1
+                print(f'FAIL {v["id"]} {scheme} {label}: {r:.2f} < {target}')
+        print(f'{v["id"]} {scheme:5s} accent {t["accent-color"]} (L={L:.3f}) on card {contrast(t["accent-color"], t["card-background"]):.2f}')
+    data.append({k: v[k] for k in ('id', 'name', 'origin')})
+
+COMMON = '''
+/* Single-colour category and tag pills instead of Stack's hashed rainbow (inline style, hence !important) */
+.article-category a, .article-tags a {
+    background-color: var(--accent-color) !important;
+    color: var(--accent-color-text) !important;
+    &:hover { background-color: var(--accent-color-darker) !important; }
+}
+
+/* Visible keyboard focus in every palette (WCAG 2.4.7) */
+:focus-visible {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Room for the prototype's palette bar */
+body { padding-bottom: 140px; }
+'''
+
+head = '// PROTOTYPE, generated by scripts/palettes.py: do not edit by hand.\n'
+os.makedirs('site/assets/scss', exist_ok=True); os.makedirs('site/data', exist_ok=True)
+open('site/assets/scss/custom.scss', 'w', encoding='utf-8').write(head + '\n\n'.join(out) + '\n' + COMMON)
+json.dump({'variants': data, 'checks': [dict(fg=f, bg=b, target=t, label=l) for f, b, t, l in CHECKS]},
+          open('site/data/palettes.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+print('contrast failures:', fail)
+sys.exit(1 if fail else 0)

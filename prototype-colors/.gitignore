@@ -1,0 +1,5 @@
+# PROTOTYPE: build output and caches
+site/public/
+site/resources/
+site/_vendor/
+site/.hugo_build.lock

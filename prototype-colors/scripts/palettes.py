@@ -19,12 +19,13 @@ VARIANTS = [
          neutral=(250, 0.014), accent=(24, 0.135), dark_neutral=(250, 0.018), dark_accent=(24, 0.105)),
     dict(id='f', light_L=0.42, name='Schiefer', origin='Schiefer und Stahlgrau als einziger Akzent; kühl, schwer, ohne Farbaussage',
          neutral=(250, 0.006), accent=(252, 0.035), dark_neutral=(250, 0.010), dark_accent=(245, 0.030)),
-    dict(id='g', light_L=0.40, name='Schiefer & Glut', origin='Schiefer für Struktur (Tags, Knöpfe), Bernstein als einziger Lichtpunkt auf Links und Fokus',
+    dict(id='g', light_L=0.40, name='Schiefer & Glut', origin='Schiefer wie F, dazu Bernstein als leuchtende Fläche: Tags, Unterstreichung, Kante an Überschriften und Zitaten',
          neutral=(250, 0.006), accent=(252, 0.035), dark_neutral=(252, 0.012), dark_accent=(245, 0.030),
-         spot=(66, 0.120, 0.53), dark_spot=(72, 0.120, 0.74)),
-    dict(id='h', light_L=0.38, name='Kohle & Stahl', origin='„Auf Kohle geboren, im Herzen aus Stahl“: Kohlegrund, Stahl für Struktur, Glut als Lichtpunkt',
+         glow=(72, 0.150, 0.80), dark_glow=(74, 0.140, 0.80), dark_spot=(74, 0.130, 0.80)),
+    dict(id='h', light_L=0.38, name='Kohle & Stahl', origin='„Auf Kohle geboren, im Herzen aus Stahl“: Kohle als Rahmen auch im hellen Modus, Stahlblech-Karten, rote Glut auf Tags, Links und Kanten',
          neutral=(245, 0.008), accent=(245, 0.028), dark_neutral=(250, 0.006), dark_accent=(240, 0.025),
-         spot=(45, 0.150, 0.52), dark_spot=(50, 0.150, 0.72), dark_ground=0.165),
+         glow=(40, 0.185, 0.66), dark_glow=(42, 0.180, 0.68), spot=(36, 0.170, 0.52), dark_spot=(42, 0.170, 0.72),
+         coal=True, dark_ground=0.155),
 ]
 
 # (foreground, background, minimum ratio, label)
@@ -34,26 +35,53 @@ CHECKS = [
     ('card-text-color-tertiary', 'card-background', 4.5, 'Metadaten'),
     ('body-text-color', 'body-background', 4.5, 'Seitenleiste'),
     ('proto-link', 'card-background', 4.5, 'Link auf Karte'),
-    ('proto-link', 'body-background', 4.5, 'Link auf Grund'),
+    ('proto-ground-accent', 'body-background', 4.5, 'Akzent auf Grund'),
     ('proto-link-hover', 'card-background', 4.5, 'Link Hover'),
     ('accent-color', 'card-background', 4.5, 'Akzent auf Karte'),
-    ('accent-color-text', 'accent-color', 4.5, 'Tag-Text'),
-    ('accent-color-text', 'accent-color-darker', 4.5, 'Tag Hover'),
+    ('accent-color-text', 'accent-color', 4.5, 'Knopf-Text'),
+    ('accent-color-text', 'accent-color-darker', 4.5, 'Knopf Hover'),
+    ('proto-glow-text', 'proto-glow', 4.5, 'Tag-Text'),
+    ('proto-glow-text', 'proto-glow-hover', 4.5, 'Tag Hover'),
     ('code-text-color', 'code-background-color', 4.5, 'Inline-Code'),
 ]
 
+def on_ground(t, v, dark_mode):
+    # a colour used on the page ground must pass there too, except on H's coal ground in light mode
+    return dark_mode or not v.get('coal')
+
 def spot(t, v, key, dark_mode):
-    # optional second colour for links and focus; otherwise links use the accent
+    # optional second colour for link text; otherwise links use the accent
     if key not in v:
         t['proto-link'], t['proto-link-hover'] = t['accent-color'], t['accent-color-darker']
-        return None
+        return
     h, c, L = v[key]
     while True:
         t['proto-link'] = oklch(L, c, h)
         t['proto-link-hover'] = oklch(L + (0.06 if dark_mode else -0.07), c, h)
-        if min(contrast(t['proto-link'], t['card-background']), contrast(t['proto-link'], t['body-background'])) >= 4.6:
+        if (contrast(t['proto-link'], t['card-background']) >= 4.6 and
+                (not on_ground(t, v, dark_mode) or contrast(t['proto-link'], t['body-background']) >= 4.6)):
             break
         L += 0.005 if dark_mode else -0.005
+
+def glow(t, v, key, dark_mode, nh):
+    # optional glowing fill (palettes G, H): tag pills, link underline, heading and quote edge.
+    # It is a surface, so it may stay bright; the pill text is coal-dark and must reach 4.5:1 on it.
+    if key not in v:
+        t['proto-glow'], t['proto-glow-hover'] = t['accent-color'], t['accent-color-darker']
+        t['proto-glow-text'] = t['accent-color-text']
+        t['proto-ground-accent'] = t['accent-color'] if on_ground(t, v, dark_mode) else t['card-text-color-main']
+        return None
+    h, c, L = v[key]
+    t['proto-glow-text'] = oklch(0.20, 0.012, nh)
+    while True:
+        t['proto-glow'] = oklch(L, c, h)
+        t['proto-glow-hover'] = oklch(L - 0.05, c, h)
+        if contrast(t['proto-glow-text'], t['proto-glow-hover']) >= 4.6:
+            break
+        L += 0.005
+    # site name, current menu item, footer: on the ground, the glow where it reads, else the accent
+    t['proto-ground-accent'] = (t['proto-glow'] if contrast(t['proto-glow'], t['body-background']) >= 4.6
+                                else t['accent-color'])
     return (h, c)
 
 def light(v):
@@ -74,16 +102,22 @@ def light(v):
         'tr-even-background-color': oklch(0.965, nc, nh),
         'table-border-color': oklch(0.86, nc, nh),
     }
+    if v.get('coal'):  # coal frame: dark ground and sidebar around light steel cards
+        t['body-background'] = oklch(0.215, nc, nh)
+        t['body-text-color'] = oklch(0.84, nc, nh)
+        t['card-background'] = oklch(0.985, nc * 0.6, nh)
     L = v['light_L']
-    while True:  # darken the accent until links and tags pass on white card and tinted ground
+    while True:  # darken the accent until links and tags pass on the card (and on the ground)
         t['accent-color'] = oklch(L, ac, ah)
         t['accent-color-darker'] = oklch(L - 0.07, ac, ah)
-        if (contrast(t['accent-color'], t['body-background']) >= 4.6 and
+        if (contrast(t['accent-color'], t['card-background']) >= 4.6 and
+                (not on_ground(t, v, False) or contrast(t['accent-color'], t['body-background']) >= 4.6) and
                 contrast(t['accent-color-text'], t['accent-color']) >= 4.6):
             break
         L -= 0.005
-    sp = spot(t, v, 'spot', False)
-    uh, uc = sp or (ah, ac)
+    spot(t, v, 'spot', False)
+    gl = glow(t, v, 'glow', False, nh)
+    uh, uc = gl or (ah, ac)
     t['link-underline'] = oklch(0.84, uc * 0.45, uh)
     return t, L
 
@@ -113,8 +147,9 @@ def dark(v):
                 contrast(t['accent-color-text'], t['accent-color-darker']) >= 4.6):
             break
         L += 0.005
-    sp = spot(t, v, 'dark_spot', True)
-    uh, uc = sp or (ah, ac)
+    spot(t, v, 'dark_spot', True)
+    gl = glow(t, v, 'dark_glow', True, nh)
+    uh, uc = gl or (ah, ac)
     t['link-underline'] = oklch(0.45, uc * 0.6, uh)
     return t, L
 
@@ -146,12 +181,15 @@ for v in VARIANTS:
 COMMON = '''
 /* Single-colour category and tag pills instead of Stack's hashed rainbow (inline style, hence !important) */
 .article-category a, .article-tags a {
-    background-color: var(--accent-color) !important;
-    color: var(--accent-color-text) !important;
-    &:hover { background-color: var(--accent-color-darker) !important; }
+    background-color: var(--proto-glow) !important;
+    color: var(--proto-glow-text) !important;
+    &:hover { background-color: var(--proto-glow-hover) !important; }
 }
 
-/* Links and focus take the optional second colour (palette G); elsewhere it equals the accent */
+/* Accent on the page ground: on H's coal frame it must be light (proto-ground-accent) */
+.sidebar .site-name, .sidebar .site-name a, #main-menu li.current a, footer.site-footer .copyright { color: var(--proto-ground-accent); }
+
+/* Link text and focus take the optional second colour (G dark, H); elsewhere it equals the accent */
 .article-content a, .widget a.link { color: var(--proto-link); }
 .article-content a:hover { color: var(--proto-link-hover); }
 
@@ -161,9 +199,22 @@ COMMON = '''
     outline-offset: 2px;
     border-radius: 2px;
 }
+.sidebar :focus-visible, footer.site-footer :focus-visible { outline-color: var(--proto-ground-accent); }
 
 /* Room for the prototype's palette bar */
 body { padding-bottom: 140px; }
+'''
+
+GLOW = [v['id'] for v in VARIANTS if 'glow' in v]
+sel = ', '.join(f':root[data-palette="{i}"]' for i in GLOW)
+COMMON += f'''
+/* Palettes with a glow ({', '.join(GLOW).upper()}): a solid, bright underline and a glowing edge on headings and quotes */
+:is({sel}) .article-content a {{
+    box-shadow: inset 0 -2px 0 var(--proto-glow);
+    &:hover {{ box-shadow: inset 0 -4px 0 var(--proto-glow); }}
+}}
+:is({sel}) .article-content :is(h1, h2, h3, h4, h5, h6),
+:is({sel}) .article-content blockquote {{ border-inline-start-color: var(--proto-glow) !important; }}
 '''
 
 head = '// PROTOTYPE, generated by scripts/palettes.py: do not edit by hand.\n'

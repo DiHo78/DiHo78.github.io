@@ -18,6 +18,10 @@
     --accent-color-darker: #003e7e;
     --proto-link: #01519f;
     --proto-link-hover: #003e7e;
+    --proto-glow: #01519f;
+    --proto-glow-hover: #003e7e;
+    --proto-glow-text: #ffffff;
+    --proto-ground-accent: #01519f;
     --link-background-color: 173, 205, 247;
 }
 
@@ -40,6 +44,10 @@
     --accent-color-darker: #3a95cd;
     --proto-link: #4fa8e1;
     --proto-link-hover: #3a95cd;
+    --proto-glow: #4fa8e1;
+    --proto-glow-hover: #3a95cd;
+    --proto-glow-text: #061223;
+    --proto-ground-accent: #4fa8e1;
     --link-background-color: 44, 90, 121;
 }
 
@@ -62,6 +70,10 @@
     --accent-color-darker: #63221d;
     --proto-link: #78362f;
     --proto-link-hover: #63221d;
+    --proto-glow: #78362f;
+    --proto-glow-hover: #63221d;
+    --proto-glow-text: #ffffff;
+    --proto-ground-accent: #78362f;
     --link-background-color: 229, 193, 187;
 }
 
@@ -84,6 +96,10 @@
     --accent-color-darker: #c77257;
     --proto-link: #db8469;
     --proto-link-hover: #c77257;
+    --proto-glow: #db8469;
+    --proto-glow-hover: #c77257;
+    --proto-glow-text: #15110d;
+    --proto-ground-accent: #db8469;
     --link-background-color: 118, 71, 57;
 }
 
@@ -106,6 +122,10 @@
     --accent-color-darker: #2d4f20;
     --proto-link: #3f6333;
     --proto-link-hover: #2d4f20;
+    --proto-glow: #3f6333;
+    --proto-glow-hover: #2d4f20;
+    --proto-glow-text: #ffffff;
+    --proto-ground-accent: #3f6333;
     --link-background-color: 191, 209, 185;
 }
 
@@ -128,6 +148,10 @@
     --accent-color-darker: #799768;
     --proto-link: #8aa97a;
     --proto-link-hover: #799768;
+    --proto-glow: #8aa97a;
+    --proto-glow-hover: #799768;
+    --proto-glow-text: #0c140e;
+    --proto-ground-accent: #8aa97a;
     --link-background-color: 75, 91, 66;
 }
 
@@ -150,6 +174,10 @@
     --accent-color-darker: #7e4a01;
     --proto-link: #995b00;
     --proto-link-hover: #7e4a01;
+    --proto-glow: #995b00;
+    --proto-glow-hover: #7e4a01;
+    --proto-glow-text: #ffffff;
+    --proto-ground-accent: #995b00;
     --link-background-color: 227, 196, 166;
 }
 
@@ -172,6 +200,10 @@
     --accent-color-darker: #b97f2b;
     --proto-link: #cc9140;
     --proto-link-hover: #b97f2b;
+    --proto-glow: #cc9140;
+    --proto-glow-hover: #b97f2b;
+    --proto-glow-text: #0a121d;
+    --proto-ground-accent: #cc9140;
     --link-background-color: 110, 78, 36;
 }
 
@@ -194,6 +226,10 @@
     --accent-color-darker: #912d2e;
     --proto-link: #a94341;
     --proto-link-hover: #912d2e;
+    --proto-glow: #a94341;
+    --proto-glow-hover: #912d2e;
+    --proto-glow-text: #ffffff;
+    --proto-ground-accent: #a94341;
     --link-background-color: 240, 188, 183;
 }
 
@@ -216,6 +252,10 @@
     --accent-color-darker: #c4726d;
     --proto-link: #d8847e;
     --proto-link-hover: #c4726d;
+    --proto-glow: #d8847e;
+    --proto-glow-hover: #c4726d;
+    --proto-glow-text: #0b1219;
+    --proto-ground-accent: #d8847e;
     --link-background-color: 116, 71, 68;
 }
 
@@ -238,6 +278,10 @@
     --accent-color-darker: #2d3c4c;
     --proto-link: #3f4f60;
     --proto-link-hover: #2d3c4c;
+    --proto-glow: #3f4f60;
+    --proto-glow-hover: #2d3c4c;
+    --proto-glow-text: #ffffff;
+    --proto-ground-accent: #3f4f60;
     --link-background-color: 195, 203, 213;
 }
 
@@ -260,6 +304,10 @@
     --accent-color-darker: #7d8f9e;
     --proto-link: #8fa1b0;
     --proto-link-hover: #7d8f9e;
+    --proto-glow: #8fa1b0;
+    --proto-glow-hover: #7d8f9e;
+    --proto-glow-text: #0e1216;
+    --proto-ground-accent: #8fa1b0;
     --link-background-color: 77, 87, 95;
 }
 
@@ -280,9 +328,13 @@
     --table-border-color: #ced1d5;
     --accent-color: #3a495a;
     --accent-color-darker: #283747;
-    --proto-link: #995b00;
-    --proto-link-hover: #7e4a01;
-    --link-background-color: 227, 196, 166;
+    --proto-link: #3a495a;
+    --proto-link-hover: #283747;
+    --proto-glow-text: #12171b;
+    --proto-glow: #f8ac3d;
+    --proto-glow-hover: #e79c27;
+    --proto-ground-accent: #3a495a;
+    --link-background-color: 230, 196, 154;
 }
 
 :root[data-palette="g"][data-scheme="dark"] {
@@ -302,20 +354,24 @@
     --table-border-color: #43484e;
     --accent-color: #8fa1b0;
     --accent-color-darker: #7d8f9e;
-    --proto-link: #d99e4d;
-    --proto-link-hover: #edb161;
-    --link-background-color: 110, 78, 36;
+    --proto-link: #efb055;
+    --proto-link-hover: #ffc577;
+    --proto-glow-text: #12161b;
+    --proto-glow: #f3af49;
+    --proto-glow-hover: #e29f36;
+    --proto-ground-accent: #f3af49;
+    --link-background-color: 113, 77, 22;
 }
 
 :root[data-palette="h"] {
-    --body-background: #e9edf2;
-    --card-background: #fcfeff;
+    --body-background: #161a1d;
+    --card-background: #f7fafd;
     --card-background-selected: #e0e7ee;
     --card-text-color-main: #1b2025;
     --card-text-color-secondary: #484e53;
     --card-text-color-tertiary: #585e64;
     --card-separator-color: #dadfe3;
-    --body-text-color: #42484e;
+    --body-text-color: #c6cbcf;
     --accent-color-text: #ffffff;
     --code-background-color: #e5e8eb;
     --code-text-color: #363e46;
@@ -324,14 +380,18 @@
     --table-border-color: #cdd2d6;
     --accent-color: #364451;
     --accent-color-darker: #24323e;
-    --proto-link: #ab4501;
-    --proto-link-hover: #8c3701;
-    --link-background-color: 241, 189, 167;
+    --proto-link: #b5360e;
+    --proto-link-hover: #982700;
+    --proto-glow-text: #12171b;
+    --proto-glow: #f1652e;
+    --proto-glow-hover: #df5519;
+    --proto-ground-accent: #f1652e;
+    --link-background-color: 251, 185, 162;
 }
 
 :root[data-palette="h"][data-scheme="dark"] {
-    --body-background: #0c0f11;
-    --card-background: #171a1c;
+    --body-background: #0a0c0f;
+    --card-background: #15171a;
     --card-background-selected: #2c2e31;
     --card-text-color-main: #eaebed;
     --card-text-color-secondary: #c3c4c6;
@@ -346,19 +406,26 @@
     --table-border-color: #45484b;
     --accent-color: #91a1ad;
     --accent-color-darker: #7f8f9a;
-    --proto-link: #ee8545;
-    --proto-link-hover: #ff9a5f;
-    --link-background-color: 124, 69, 35;
+    --proto-link: #fa7a45;
+    --proto-link-hover: #ff9971;
+    --proto-glow-text: #12171b;
+    --proto-glow: #f06a2e;
+    --proto-glow-hover: #de5a18;
+    --proto-ground-accent: #f06a2e;
+    --link-background-color: 133, 61, 31;
 }
 
 /* Single-colour category and tag pills instead of Stack's hashed rainbow (inline style, hence !important) */
 .article-category a, .article-tags a {
-    background-color: var(--accent-color) !important;
-    color: var(--accent-color-text) !important;
-    &:hover { background-color: var(--accent-color-darker) !important; }
+    background-color: var(--proto-glow) !important;
+    color: var(--proto-glow-text) !important;
+    &:hover { background-color: var(--proto-glow-hover) !important; }
 }
 
-/* Links and focus take the optional second colour (palette G); elsewhere it equals the accent */
+/* Accent on the page ground: on H's coal frame it must be light (proto-ground-accent) */
+.sidebar .site-name, .sidebar .site-name a, #main-menu li.current a, footer.site-footer .copyright { color: var(--proto-ground-accent); }
+
+/* Link text and focus take the optional second colour (G dark, H); elsewhere it equals the accent */
 .article-content a, .widget a.link { color: var(--proto-link); }
 .article-content a:hover { color: var(--proto-link-hover); }
 
@@ -368,6 +435,15 @@
     outline-offset: 2px;
     border-radius: 2px;
 }
+.sidebar :focus-visible, footer.site-footer :focus-visible { outline-color: var(--proto-ground-accent); }
 
 /* Room for the prototype's palette bar */
 body { padding-bottom: 140px; }
+
+/* Palettes with a glow (G, H): a solid, bright underline and a glowing edge on headings and quotes */
+:is(:root[data-palette="g"], :root[data-palette="h"]) .article-content a {
+    box-shadow: inset 0 -2px 0 var(--proto-glow);
+    &:hover { box-shadow: inset 0 -4px 0 var(--proto-glow); }
+}
+:is(:root[data-palette="g"], :root[data-palette="h"]) .article-content :is(h1, h2, h3, h4, h5, h6),
+:is(:root[data-palette="g"], :root[data-palette="h"]) .article-content blockquote { border-inline-start-color: var(--proto-glow) !important; }

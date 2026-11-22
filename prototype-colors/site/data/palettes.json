@@ -33,12 +33,12 @@
   {
    "id": "g",
    "name": "Schiefer & Glut",
-   "origin": "Schiefer für Struktur (Tags, Knöpfe), Bernstein als einziger Lichtpunkt auf Links und Fokus"
+   "origin": "Schiefer wie F, dazu Bernstein als leuchtende Fläche: Tags, Unterstreichung, Kante an Überschriften und Zitaten"
   },
   {
    "id": "h",
    "name": "Kohle & Stahl",
-   "origin": "„Auf Kohle geboren, im Herzen aus Stahl“: Kohlegrund, Stahl für Struktur, Glut als Lichtpunkt"
+   "origin": "„Auf Kohle geboren, im Herzen aus Stahl“: Kohle als Rahmen auch im hellen Modus, Stahlblech-Karten, rote Glut auf Tags, Links und Kanten"
   }
  ],
  "checks": [
@@ -73,10 +73,10 @@
    "label": "Link auf Karte"
   },
   {
-   "fg": "proto-link",
+   "fg": "proto-ground-accent",
    "bg": "body-background",
    "target": 4.5,
-   "label": "Link auf Grund"
+   "label": "Akzent auf Grund"
   },
   {
    "fg": "proto-link-hover",
@@ -94,11 +94,23 @@
    "fg": "accent-color-text",
    "bg": "accent-color",
    "target": 4.5,
-   "label": "Tag-Text"
+   "label": "Knopf-Text"
   },
   {
    "fg": "accent-color-text",
    "bg": "accent-color-darker",
+   "target": 4.5,
+   "label": "Knopf Hover"
+  },
+  {
+   "fg": "proto-glow-text",
+   "bg": "proto-glow",
+   "target": 4.5,
+   "label": "Tag-Text"
+  },
+  {
+   "fg": "proto-glow-text",
+   "bg": "proto-glow-hover",
    "target": 4.5,
    "label": "Tag Hover"
   },

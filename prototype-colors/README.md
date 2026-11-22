@@ -22,11 +22,12 @@ Without Docker: screenshots in [`shots/`](shots/).
 | D | Goldene Stunde | `#995b00` | `#cc9140` | amber of the small tortoiseshell `#ae701a`; dark ground: blue hour |
 | E | Dompfaff | `#a94341` | `#d8847e` | bullfinch: brick-rose breast, blue-grey back (estimated, not measured) |
 | F | Schiefer | `#3f4f60` | `#8fa1b0` | slate and steel grey as the only accent |
-| G | Schiefer & Glut | `#3a495a` + amber links | `#8fa1b0` + amber links | slate for structure, amber from D as the one spot on links and focus |
-| H | Kohle & Stahl | `#364451` + ember links | `#91a1ad` + ember links | "Auf Kohle geboren, im Herzen aus Stahl": coal-black dark ground, steel structure, ember orange |
+| G | Schiefer & Glut | `#3a495a` + amber glow `#f8ac3d` | `#8fa1b0` + amber glow `#f3af49` | F's slate frame; amber as a bright surface: tag pills (coal-dark text), link underline, edge of headings and quotes |
+| H | Kohle & Stahl | `#364451` + ember glow `#f1652e` on a coal frame | `#91a1ad` + ember glow `#f06a2e` | "Auf Kohle geboren, im Herzen aus Stahl": coal-black ground and sidebar also in light mode, light steel cards, red ember on pills, links, site name, edges |
 
 Anchors measured from the user's own Zollverein photos (Pillow, mean of image regions). The shared idea: a sparse,
-muted ground and one living spot of colour. G and H carry it literally: a second colour (`spot`) only on links and focus.
+muted ground and one living spot of colour. G and H carry it literally: a glow (`glow`) as a bright surface, which may stay bright because its text is coal-dark,
+not as thin link text, which on white must be dark enough to look brown (round 2 lesson: the user saw no glow there).
 
 ## How
 
@@ -41,7 +42,7 @@ muted ground and one living spot of colour. G and H carry it literally: a second
 
 ## Checks
 
-- `hugo --panicOnWarning` builds; all 176 contrast pairs (8 palettes × 2 modes × 11 pairs) pass, in Python and
+- `hugo --panicOnWarning` builds; all 208 contrast pairs (8 palettes × 2 modes × 13 pairs) pass, in Python and
   in the browser.
 - `impeccable detect` 4.8.0 on the built HTML: `overused-font` (Stack's CSS names Lato, not loaded since the
   Google Fonts override), `cramped-padding` (the tweet quote's blockquote), `bounce-easing` (a Stack transition).

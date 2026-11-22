@@ -20,6 +20,8 @@ jobs:
         run: sh tools/install_test.sh
       - name: Install Go, Hugo, Dart Sass, htmltest, Node, markdownlint-cli2
         run: sh tools/install.sh "$RUNNER_TEMP/tools" go hugo sass htmltest node markdownlint
+      - name: Test the Go tools
+        run: . "$RUNNER_TEMP/tools/env.sh" && go test ./...
       - name: Build
         run: . "$RUNNER_TEMP/tools/env.sh" && hugo --panicOnWarning
       - name: Check links, images and anchors

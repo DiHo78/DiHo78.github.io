@@ -3,6 +3,8 @@
 *.xml
 *.zip
 !layouts/**/*.xml
+# The public sitemap of the old blog holds only URLs and dates.
+!/tools/sitemapcheck/wordpress-sitemap.xml
 
 # Hugo's build output and caches
 /public/

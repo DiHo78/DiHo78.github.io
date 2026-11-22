@@ -9,5 +9,7 @@ gibt es nicht: Der alte Blog bleibt öffentlich und verweist auf die neue Adress
 Entscheidungen: [`docs/adr/0001-blog-migration.md`](docs/adr/0001-blog-migration.md).
 
 Prüfungen: `hugo --panicOnWarning` baut die Seite, `htmltest` prüft die gebaute Seite, `markdownlint-cli2`
-ist der Linter für die Inhalte. Installieren mit `sh tools/install.sh <Ordner>` in einen neuen oder leeren
+ist der Linter für die Inhalte. `go run ./tools/sitemapcheck <sitemap.xml> <Ordner>` meldet jede URL der alten
+Sitemap ohne Seite im gebauten Ordner; der Snapshot liegt in `tools/sitemapcheck/wordpress-sitemap.xml`, `go test ./...`
+testet das Werkzeug. Installieren mit `sh tools/install.sh <Ordner>` in einen neuen oder leeren
 Ordner; die Befehle stehen in [`docs/agents/test.md`](docs/agents/test.md).

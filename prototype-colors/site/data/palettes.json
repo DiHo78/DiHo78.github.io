@@ -3,7 +3,7 @@
   {
    "id": "a",
    "name": "Blaue Stunde",
-   "origin": "Kanalblau, Wasserspiegel an der Kokerei; dein Dunkelblau"
+   "origin": "Tiefes Kanalblau, satter als zuvor; dunkel: Nachtblau mit Wasserblau"
   },
   {
    "id": "b",
@@ -24,6 +24,21 @@
    "id": "e",
    "name": "Dompfaff",
    "origin": "Brust ziegelrosa, Rücken blaugrau, Kappe schwarz (geschätzt)"
+  },
+  {
+   "id": "f",
+   "name": "Schiefer",
+   "origin": "Schiefer und Stahlgrau als einziger Akzent; kühl, schwer, ohne Farbaussage"
+  },
+  {
+   "id": "g",
+   "name": "Schiefer & Glut",
+   "origin": "Schiefer für Struktur (Tags, Knöpfe), Bernstein als einziger Lichtpunkt auf Links und Fokus"
+  },
+  {
+   "id": "h",
+   "name": "Kohle & Stahl",
+   "origin": "„Auf Kohle geboren, im Herzen aus Stahl“: Kohlegrund, Stahl für Struktur, Glut als Lichtpunkt"
   }
  ],
  "checks": [
@@ -52,22 +67,28 @@
    "label": "Seitenleiste"
   },
   {
-   "fg": "accent-color",
+   "fg": "proto-link",
    "bg": "card-background",
    "target": 4.5,
    "label": "Link auf Karte"
   },
   {
-   "fg": "accent-color",
+   "fg": "proto-link",
    "bg": "body-background",
    "target": 4.5,
    "label": "Link auf Grund"
   },
   {
-   "fg": "accent-color-darker",
+   "fg": "proto-link-hover",
    "bg": "card-background",
    "target": 4.5,
    "label": "Link Hover"
+  },
+  {
+   "fg": "accent-color",
+   "bg": "card-background",
+   "target": 4.5,
+   "label": "Akzent auf Karte"
   },
   {
    "fg": "accent-color-text",

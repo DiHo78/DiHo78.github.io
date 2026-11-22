@@ -1,4 +1,4 @@
-# PROTOTYPE, throwaway: derive the five palettes and write site/assets/scss/custom.scss + site/data/palettes.json.
+# PROTOTYPE, throwaway: derive the palettes and write site/assets/scss/custom.scss + site/data/palettes.json.
 # usage (from prototype-colors/): python3 -I scripts/palettes.py
 # Every token is OKLCH; lightness is nudged until each contrast pair in CHECKS meets its WCAG target.
 import json, os, sys
@@ -7,8 +7,8 @@ from oklch import oklch, contrast
 
 # hue/chroma come from the measured photo anchors (REPORT.md); the bullfinch is estimated, not measured
 VARIANTS = [
-    dict(id='a', light_L=0.48, name='Blaue Stunde', origin='Kanalblau, Wasserspiegel an der Kokerei; dein Dunkelblau',
-         neutral=(250, 0.010), accent=(248, 0.10), dark_neutral=(252, 0.022), dark_accent=(235, 0.085)),
+    dict(id='a', light_L=0.44, name='Blaue Stunde', origin='Tiefes Kanalblau, satter als zuvor; dunkel: Nachtblau mit Wasserblau',
+         neutral=(250, 0.016), accent=(255, 0.150), dark_neutral=(258, 0.040), dark_accent=(240, 0.120)),
     dict(id='b', light_L=0.42, name='Zollverein', origin='Stahlträger-Rotbraun (#5a3530); dunkel: oxidiertes Rohr (#e1866a)',
          neutral=(60, 0.008), accent=(28, 0.095), dark_neutral=(60, 0.010), dark_accent=(38, 0.115)),
     dict(id='c', light_L=0.46, name='Grünzug', origin='Gedecktes Moos- und Olivgrün; Felder, Wiesen, Wälder vom Rad aus',
@@ -17,6 +17,14 @@ VARIANTS = [
          neutral=(250, 0.006), accent=(66, 0.120), dark_neutral=(255, 0.026), dark_accent=(72, 0.120)),
     dict(id='e', light_L=0.52, name='Dompfaff', origin='Brust ziegelrosa, Rücken blaugrau, Kappe schwarz (geschätzt)',
          neutral=(250, 0.014), accent=(24, 0.135), dark_neutral=(250, 0.018), dark_accent=(24, 0.105)),
+    dict(id='f', light_L=0.42, name='Schiefer', origin='Schiefer und Stahlgrau als einziger Akzent; kühl, schwer, ohne Farbaussage',
+         neutral=(250, 0.006), accent=(252, 0.035), dark_neutral=(250, 0.010), dark_accent=(245, 0.030)),
+    dict(id='g', light_L=0.40, name='Schiefer & Glut', origin='Schiefer für Struktur (Tags, Knöpfe), Bernstein als einziger Lichtpunkt auf Links und Fokus',
+         neutral=(250, 0.006), accent=(252, 0.035), dark_neutral=(252, 0.012), dark_accent=(245, 0.030),
+         spot=(66, 0.120, 0.53), dark_spot=(72, 0.120, 0.74)),
+    dict(id='h', light_L=0.38, name='Kohle & Stahl', origin='„Auf Kohle geboren, im Herzen aus Stahl“: Kohlegrund, Stahl für Struktur, Glut als Lichtpunkt',
+         neutral=(245, 0.008), accent=(245, 0.028), dark_neutral=(250, 0.006), dark_accent=(240, 0.025),
+         spot=(45, 0.150, 0.52), dark_spot=(50, 0.150, 0.72), dark_ground=0.165),
 ]
 
 # (foreground, background, minimum ratio, label)
@@ -25,13 +33,28 @@ CHECKS = [
     ('card-text-color-secondary', 'card-background', 4.5, 'Text sekundär'),
     ('card-text-color-tertiary', 'card-background', 4.5, 'Metadaten'),
     ('body-text-color', 'body-background', 4.5, 'Seitenleiste'),
-    ('accent-color', 'card-background', 4.5, 'Link auf Karte'),
-    ('accent-color', 'body-background', 4.5, 'Link auf Grund'),
-    ('accent-color-darker', 'card-background', 4.5, 'Link Hover'),
+    ('proto-link', 'card-background', 4.5, 'Link auf Karte'),
+    ('proto-link', 'body-background', 4.5, 'Link auf Grund'),
+    ('proto-link-hover', 'card-background', 4.5, 'Link Hover'),
+    ('accent-color', 'card-background', 4.5, 'Akzent auf Karte'),
     ('accent-color-text', 'accent-color', 4.5, 'Tag-Text'),
     ('accent-color-text', 'accent-color-darker', 4.5, 'Tag Hover'),
     ('code-text-color', 'code-background-color', 4.5, 'Inline-Code'),
 ]
+
+def spot(t, v, key, dark_mode):
+    # optional second colour for links and focus; otherwise links use the accent
+    if key not in v:
+        t['proto-link'], t['proto-link-hover'] = t['accent-color'], t['accent-color-darker']
+        return None
+    h, c, L = v[key]
+    while True:
+        t['proto-link'] = oklch(L, c, h)
+        t['proto-link-hover'] = oklch(L + (0.06 if dark_mode else -0.07), c, h)
+        if min(contrast(t['proto-link'], t['card-background']), contrast(t['proto-link'], t['body-background'])) >= 4.6:
+            break
+        L += 0.005 if dark_mode else -0.005
+    return (h, c)
 
 def light(v):
     nh, nc = v['neutral']; ah, ac = v['accent']
@@ -59,14 +82,16 @@ def light(v):
                 contrast(t['accent-color-text'], t['accent-color']) >= 4.6):
             break
         L -= 0.005
-    t['link-underline'] = oklch(0.84, ac * 0.45, ah)
+    sp = spot(t, v, 'spot', False)
+    uh, uc = sp or (ah, ac)
+    t['link-underline'] = oklch(0.84, uc * 0.45, uh)
     return t, L
 
 def dark(v):
     nh, nc = v['dark_neutral']; ah, ac = v['dark_accent']
     t = {
-        'body-background': oklch(0.195, nc, nh),
-        'card-background': oklch(0.245, nc, nh),
+        'body-background': oklch(v.get('dark_ground', 0.195), nc, nh),
+        'card-background': oklch(v.get('dark_ground', 0.195) + 0.05, nc, nh),
         'card-background-selected': oklch(0.30, nc, nh),
         'card-text-color-main': oklch(0.94, nc * 0.4, nh),
         'card-text-color-secondary': oklch(0.82, nc * 0.5, nh),
@@ -88,7 +113,9 @@ def dark(v):
                 contrast(t['accent-color-text'], t['accent-color-darker']) >= 4.6):
             break
         L += 0.005
-    t['link-underline'] = oklch(0.45, ac * 0.6, ah)
+    sp = spot(t, v, 'dark_spot', True)
+    uh, uc = sp or (ah, ac)
+    t['link-underline'] = oklch(0.45, uc * 0.6, uh)
     return t, L
 
 def rgb_triple(h):
@@ -124,9 +151,13 @@ COMMON = '''
     &:hover { background-color: var(--accent-color-darker) !important; }
 }
 
+/* Links and focus take the optional second colour (palette G); elsewhere it equals the accent */
+.article-content a, .widget a.link { color: var(--proto-link); }
+.article-content a:hover { color: var(--proto-link-hover); }
+
 /* Visible keyboard focus in every palette (WCAG 2.4.7) */
 :focus-visible {
-    outline: 3px solid var(--accent-color);
+    outline: 3px solid var(--proto-link);
     outline-offset: 2px;
     border-radius: 2px;
 }

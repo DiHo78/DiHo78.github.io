@@ -24,7 +24,7 @@ VARIANTS = [
          glow=(72, 0.150, 0.80), dark_glow=(74, 0.140, 0.80), dark_spot=(74, 0.130, 0.80)),
     dict(id='h', light_L=0.38, name='Kohle & Stahl', origin='„Auf Kohle geboren, im Herzen aus Stahl“: Kohle als Rahmen auch im hellen Modus, Stahlblech-Karten, rote Glut auf Tags, Links und Kanten',
          neutral=(245, 0.008), accent=(245, 0.028), dark_neutral=(250, 0.006), dark_accent=(240, 0.025),
-         glow=(40, 0.185, 0.66), dark_glow=(42, 0.180, 0.68), spot=(36, 0.170, 0.52), dark_spot=(42, 0.170, 0.72),
+         glow=(31, 0.190, 0.66), dark_glow=(32, 0.185, 0.68), spot=(29, 0.175, 0.52), dark_spot=(32, 0.170, 0.72),
          coal=True, dark_ground=0.155),
 ]
 

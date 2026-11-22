@@ -23,11 +23,15 @@ Without Docker: screenshots in [`shots/`](shots/).
 | E | Dompfaff | `#a94341` | `#d8847e` | bullfinch: brick-rose breast, blue-grey back (estimated, not measured) |
 | F | Schiefer | `#3f4f60` | `#8fa1b0` | slate and steel grey as the only accent |
 | G | Schiefer & Glut | `#3a495a` + amber glow `#f8ac3d` | `#8fa1b0` + amber glow `#f3af49` | F's slate frame; amber as a bright surface: tag pills (coal-dark text), link underline, edge of headings and quotes |
-| H | Kohle & Stahl | `#364451` + ember glow `#f1652e` on a coal frame | `#91a1ad` + ember glow `#f06a2e` | "Auf Kohle geboren, im Herzen aus Stahl": coal-black ground and sidebar also in light mode, light steel cards, red ember on pills, links, site name, edges |
+| H | Kohle & Stahl | `#364451` + ember glow `#f55e47` on a coal frame | `#91a1ad` + ember glow `#f56249` | "Auf Kohle geboren, im Herzen aus Stahl": coal-black ground and sidebar also in light mode, light steel cards, red ember on pills, links, site name, edges |
 
 Anchors measured from the user's own Zollverein photos (Pillow, mean of image regions). The shared idea: a sparse,
 muted ground and one living spot of colour. G and H carry it literally: a glow (`glow`) as a bright surface, which may stay bright because its text is coal-dark,
 not as thin link text, which on white must be dark enough to look brown (round 2 lesson: the user saw no glow there).
+
+## Decision
+
+The user picked **H Kohle & Stahl** as the starting palette, with the ember shifted towards red (round 4).
 
 ## How
 

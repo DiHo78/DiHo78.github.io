@@ -380,13 +380,13 @@
     --table-border-color: #cdd2d6;
     --accent-color: #364451;
     --accent-color-darker: #24323e;
-    --proto-link: #b5360e;
-    --proto-link-hover: #982700;
+    --proto-link: #b83025;
+    --proto-link-hover: #a0110c;
     --proto-glow-text: #12171b;
-    --proto-glow: #f1652e;
-    --proto-glow-hover: #df5519;
-    --proto-ground-accent: #f1652e;
-    --link-background-color: 251, 185, 162;
+    --proto-glow: #f55e47;
+    --proto-glow-hover: #e34d38;
+    --proto-ground-accent: #f55e47;
+    --link-background-color: 253, 182, 169;
 }
 
 :root[data-palette="h"][data-scheme="dark"] {
@@ -406,13 +406,13 @@
     --table-border-color: #45484b;
     --accent-color: #91a1ad;
     --accent-color-darker: #7f8f9a;
-    --proto-link: #fa7a45;
-    --proto-link-hover: #ff9971;
+    --proto-link: #fd765d;
+    --proto-link-hover: #fe9783;
     --proto-glow-text: #12171b;
-    --proto-glow: #f06a2e;
-    --proto-glow-hover: #de5a18;
-    --proto-ground-accent: #f06a2e;
-    --link-background-color: 133, 61, 31;
+    --proto-glow: #f56249;
+    --proto-glow-hover: #e35239;
+    --proto-ground-accent: #f56249;
+    --link-background-color: 136, 57, 43;
 }
 
 /* Single-colour category and tag pills instead of Stack's hashed rainbow (inline style, hence !important) */

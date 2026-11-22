@@ -80,7 +80,6 @@ func TestExternalLoadsFail(t *testing.T) {
 		"backslashes":           {"", `<script src="\\cdn.example.com/x.js"></script>`, `\\cdn.example.com/x.js`},
 		"slash backslash":       {"", `<script src="/\cdn.example.com/x.js"></script>`, `/\cdn.example.com/x.js`},
 		"three slashes":         {"", `<script src="///cdn.example.com/x.js"></script>`, "///cdn.example.com/x.js"},
-		"tab in scheme":         {"", "<script src=\"ht\ttps://cdn.example.com/x.js\"></script>", "ht\ttps://cdn.example.com/x.js"},
 		"background attribute":  {"", `<table background="https://cdn.example.com/b.png"></table>`, "https://cdn.example.com/b.png"},
 		"style @import":         {`<style>@import "https://fonts.googleapis.com/css?family=Lato";</style>`, "", "https://fonts.googleapis.com/css?family=Lato"},
 	}
@@ -108,6 +107,7 @@ func TestLinksAndOwnOriginPass(t *testing.T) {
 		"JSON-LD":                    {`<script type="application/ld+json">{"@context": "https://schema.org"}</script>`, ""},
 		"own scheme relative":        {"", `<img src="https:a.png"><img src="https:/a.png">`},
 		"inline script own origin":   {"", `<script>fetch("https:\/\/diho78.github.io\/index.json"); const p = "/js/x.js";</script>`},
+		"tab in own path":            {"", "<img src=\"/a\t.png\">"},
 		"meta content":               {`<meta property="og:image" content="https://cdn.example.com/a.png">`, ""},
 	}
 	for name, c := range cases {

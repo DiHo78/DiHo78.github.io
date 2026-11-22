@@ -48,7 +48,7 @@ sitemap and the post pages:
     posts may be re-sorted.
 15. All images are downloaded into the repo as page bundles next to the post.
 16. No search at launch (Stack's built-in search or Pagefind later).
-17. Theme: Stack (`github.com/CaiJimmy/hugo-theme-stack/v3`, GPL-3.0), as used by jpomfret/jpomfret.github.io.
+17. Theme: Stack (`github.com/CaiJimmy/hugo-theme-stack/v4`, GPL-3.0), as used by jpomfret/jpomfret.github.io.
     Final only after the prototype shows it with 3–4 real posts.
 18. Theme as a Hugo module (needs Go).
 19. Checks: `hugo --panicOnWarning`; `htmltest` for internal links, images and anchors (external links not on every

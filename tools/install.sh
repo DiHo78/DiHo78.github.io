@@ -2,6 +2,7 @@
 # Installs the pinned build and test tools into <dir> and writes <dir>/env.sh.
 # Usage: sh tools/install.sh <dir> [tool ...]
 # Tools: go hugo sass htmltest gitleaks node markdownlint (default: all).
+# <dir> is new, empty or an earlier install; its path holds only A-Z a-z 0-9 . _ / -.
 # Every SHA-256 is copied from the release's checksums file (Dart Sass: the
 # asset digest GitHub shows; it publishes no checksums file).
 # Needs curl, tar, sha256sum. markdownlint needs node and installs the
@@ -22,8 +23,21 @@ NODE_VERSION=26.13.1
 NODE_SHA256=518674de2b621728a5e4486f5fb3b7d2900bb3cc4aa97969edaa463db99f9778
 
 [ $# -ge 1 ] || { echo "usage: sh tools/install.sh <dir> [tool ...]" >&2; exit 2; }
+# <dir> goes into env.sh, which gets sourced: allow no shell syntax in it.
+case $1 in
+  *[!A-Za-z0-9._/-]*) echo "refused: <dir> may hold only A-Z a-z 0-9 . _ / -: $1" >&2; exit 2 ;;
+esac
+# The script replaces folders in <dir>: only in one it created itself.
+marker=.installed-by-tools-install-sh
+if [ -d "$1" ] && [ ! -f "$1/$marker" ] && [ -n "$(ls -A "$1")" ]; then
+  echo "refused: $1 is not empty and was not created by tools/install.sh" >&2; exit 2
+fi
 mkdir -p "$1/bin"
+touch "$1/$marker"
 dir=$(cd "$1" && pwd)
+case $dir in
+  *[!A-Za-z0-9._/-]*) echo "refused: the path of <dir> may hold only A-Z a-z 0-9 . _ / -: $dir" >&2; exit 2 ;;
+esac
 shift
 [ $# -gt 0 ] || set -- go hugo sass htmltest gitleaks node markdownlint
 repo=$(cd "$(dirname "$0")/.." && pwd)
@@ -80,7 +94,7 @@ for tool; do
     markdownlint)
       mkdir "$tmp/md"
       cp "$repo/package.json" "$repo/package-lock.json" "$tmp/md/"
-      (cd "$tmp/md" && PATH="$dir/node/bin:$PATH" npm ci --no-bin-links --no-audit --no-fund)
+      (cd "$tmp/md" && PATH="$dir/node/bin:$PATH" npm ci --no-bin-links --ignore-scripts --no-audit --no-fund)
       rm -rf "$dir/markdownlint"
       cp -R "$tmp/md" "$dir/markdownlint"
       printf '#!/bin/sh\nexec node "$(dirname "$0")/../markdownlint/node_modules/markdownlint-cli2/markdownlint-cli2-bin.mjs" "$@"\n' > "$dir/bin/markdownlint-cli2"

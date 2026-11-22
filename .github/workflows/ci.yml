@@ -16,6 +16,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Test the install script
+        run: sh tools/install_test.sh
       - name: Install Go, Hugo, Dart Sass, htmltest, Node, markdownlint-cli2
         run: sh tools/install.sh "$RUNNER_TEMP/tools" go hugo sass htmltest node markdownlint
       - name: Build

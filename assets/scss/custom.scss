@@ -136,3 +136,32 @@ footer.site-footer .copyright {
 footer.site-footer :focus-visible {
     outline-color: var(--palette-ground-accent);
 }
+
+// Code highlight: the colours of Stack's Chroma styles (monokailight, monokai)
+// that stay under 4.5:1 on the code background (#fafafa light, #272822 dark)
+// keep their OKLCH hue and chroma, with the lightness that reaches 4.5:1.
+[data-scheme="light"] .chroma {
+    // keyword: #00a8c8 (2.71:1) -> 4.53:1
+    .k, .kc, .kd, .kp, .kr, .kt, .no { color: #087e97; }
+    // name: #75af00 (2.55:1) -> 4.56:1
+    .na, .nc, .nd, .ne, .nf, .nx, .gi { color: #547f04; }
+    // literal: #d88200 (2.83:1) -> 4.50:1
+    .ld, .s, .sa, .sb, .sc, .dl, .sd, .s2, .sh, .si, .sx, .sr, .s1, .ss { color: #a76405; }
+    // lineno: #7f7f7f (3.84:1) -> 4.54:1
+    .lnt, .ln { color: #737373; }
+    // number: #ae81ff (2.72:1) -> 4.55:1
+    .l, .se, .m, .mb, .mf, .mh, .mi, .il, .mo { color: #8859d4; }
+    // operator: #f92672 (3.63:1) -> 4.52:1
+    .kn, .nt, .o, .ow, .gd { color: #e30163; }
+}
+
+[data-scheme="dark"] .chroma {
+    // error: #bb0064 (2.33:1) -> 4.55:1
+    .err { color: #f54f93; }
+    // comment: #75715e (3.03:1) -> 4.51:1
+    .c, .ch, .cm, .c1, .cs, .cp, .cpf, .gu { color: #928e7a; }
+    // lineno: #7f7f7f (3.71:1) -> 4.54:1
+    .lnt, .ln { color: #8e8e8e; }
+    // operator: #f92672 (3.93:1) -> 4.51:1
+    .kn, .nt, .o, .ow, .gd { color: #fe457e; }
+}

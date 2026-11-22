@@ -24,6 +24,8 @@ jobs:
         run: . "$RUNNER_TEMP/tools/env.sh" && go test ./...
       - name: Build
         run: . "$RUNNER_TEMP/tools/env.sh" && hugo --panicOnWarning
+      - name: Check that no page loads anything from another origin
+        run: . "$RUNNER_TEMP/tools/env.sh" && go run ./tools/nothirdparty public https://diho78.github.io
       - name: Check links, images and anchors
         run: . "$RUNNER_TEMP/tools/env.sh" && htmltest
       - name: Lint the content

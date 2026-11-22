@@ -1,0 +1,4 @@
+# PROTOTYPE: content variant raw-blog2md
+contentDir: variants/raw-blog2md/content
+staticDir: [variants/raw-blog2md/static]
+title: "blog2md, raw output"

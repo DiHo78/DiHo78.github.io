@@ -1,0 +1,6 @@
+# PROTOTYPE: build output and caches; the WordPress export never enters the repo
+site/public/
+site/resources/
+site/_vendor/
+site/.hugo_build.lock
+*.xml

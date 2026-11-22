@@ -1,0 +1,4 @@
+# PROTOTYPE: content variant raw-wp2hugo
+contentDir: variants/raw-wp2hugo/content
+staticDir: [variants/raw-wp2hugo/static]
+title: "wp2hugo, raw output"

@@ -1,0 +1,25 @@
+# PROTOTYPE, throwaway. `docker compose up`, then open
+#   http://localhost:1313  wp2hugo, raw output
+#   http://localhost:1314  blog2md, raw output
+#   http://localhost:1315  wp2hugo + scripts/postprocess.py (target shape of ADR 0001)
+x-hugo: &hugo
+  build: .
+  image: proto-hugo:0.169.0
+  volumes:
+    - ./site:/site
+    - hugocache:/tmp/hugo_cache   # Hugo keeps the Stack module here
+services:
+  raw-wp2hugo:
+    <<: *hugo
+    command: hugo server -e raw-wp2hugo --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313/ --disableFastRender --renderToMemory
+    ports: ["127.0.0.1:1313:1313"]
+  raw-blog2md:
+    <<: *hugo
+    command: hugo server -e raw-blog2md --bind 0.0.0.0 --port 1314 --baseURL http://localhost:1314/ --disableFastRender --renderToMemory
+    ports: ["127.0.0.1:1314:1314"]
+  fixed:
+    <<: *hugo
+    command: hugo server -e fixed --bind 0.0.0.0 --port 1315 --baseURL http://localhost:1315/ --disableFastRender --renderToMemory
+    ports: ["127.0.0.1:1315:1315"]
+volumes:
+  hugocache:

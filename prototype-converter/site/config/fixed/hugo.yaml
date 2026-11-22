@@ -1,0 +1,4 @@
+# PROTOTYPE: content variant fixed
+contentDir: variants/fixed/content
+staticDir: [variants/fixed/static]
+title: "wp2hugo + post-processing"

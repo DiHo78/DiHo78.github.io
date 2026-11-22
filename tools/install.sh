@@ -24,20 +24,23 @@ NODE_SHA256=518674de2b621728a5e4486f5fb3b7d2900bb3cc4aa97969edaa463db99f9778
 
 [ $# -ge 1 ] || { echo "usage: sh tools/install.sh <dir> [tool ...]" >&2; exit 2; }
 # <dir> goes into env.sh, which gets sourced: allow no shell syntax in it.
+# The characters are listed one by one, since ranges depend on the locale.
+safe=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._/-
 case $1 in
-  *[!A-Za-z0-9._/-]*) echo "refused: <dir> may hold only A-Z a-z 0-9 . _ / -: $1" >&2; exit 2 ;;
+  ''|*[!$safe]*) echo "refused: <dir> must be non-empty and hold only A-Z a-z 0-9 . _ / -: '$1'" >&2; exit 2 ;;
+esac
+mkdir -p "$1"
+dir=$(cd "$1" && pwd)
+case $dir in
+  *[!$safe]*) echo "refused: the path of <dir> may hold only A-Z a-z 0-9 . _ / -: $dir" >&2; exit 2 ;;
 esac
 # The script replaces folders in <dir>: only in one it created itself.
 marker=.installed-by-tools-install-sh
-if [ -d "$1" ] && [ ! -f "$1/$marker" ] && [ -n "$(ls -A "$1")" ]; then
-  echo "refused: $1 is not empty and was not created by tools/install.sh" >&2; exit 2
+if [ ! -f "$dir/$marker" ] && [ -n "$(ls -A "$dir")" ]; then
+  echo "refused: $dir is not empty and was not created by tools/install.sh" >&2; exit 2
 fi
-mkdir -p "$1/bin"
-touch "$1/$marker"
-dir=$(cd "$1" && pwd)
-case $dir in
-  *[!A-Za-z0-9._/-]*) echo "refused: the path of <dir> may hold only A-Z a-z 0-9 . _ / -: $dir" >&2; exit 2 ;;
-esac
+mkdir -p "$dir/bin"
+touch "$dir/$marker"
 shift
 [ $# -gt 0 ] || set -- go hugo sass htmltest gitleaks node markdownlint
 repo=$(cd "$(dirname "$0")/.." && pwd)

@@ -18,6 +18,13 @@ sh "$install" "$root/home" go >/dev/null 2>&1
 [ $? -ne 0 ] && [ -f "$root/home/go/keep" ] && [ ! -e "$root/home/bin" ]
 check $? "refuses a non-empty folder it did not create"
 
+# An empty <dir> never falls back to the working folder.
+mkdir -p "$root/cwd/go"
+touch "$root/cwd/go/keep"
+(cd "$root/cwd" && sh "$install" "" nosuchtool >/dev/null 2>"$root/err")
+[ $? -ne 0 ] && grep -q '^refused' "$root/err" && [ -f "$root/cwd/go/keep" ] && [ ! -e "$root/cwd/bin" ]
+check $? "refuses an empty folder name"
+
 # A folder name with shell syntax never reaches env.sh.
 for name in 'a$(echo x)' 'a`echo x`' 'a"b' "a'b" 'a;b'; do
   sh "$install" "$root/$name" nosuchtool >/dev/null 2>&1

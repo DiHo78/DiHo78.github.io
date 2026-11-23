@@ -139,7 +139,8 @@ footer.site-footer :focus-visible {
 
 // Code highlight: the colours of Stack's Chroma styles (monokailight, monokai)
 // that stay under 4.5:1 on the code background (#fafafa light, #272822 dark)
-// keep their OKLCH hue and chroma, with the lightness that reaches 4.5:1.
+// keep their OKLCH hue; lightness lowered (light) or raised (dark) to reach
+// 4.5:1, chroma reduced where needed to stay in sRGB.
 [data-scheme="light"] .chroma {
     // keyword: #00a8c8 (2.71:1) -> 4.53:1
     .k, .kc, .kd, .kp, .kr, .kt, .no { color: #087e97; }

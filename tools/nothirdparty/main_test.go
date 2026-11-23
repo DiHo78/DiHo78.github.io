@@ -83,6 +83,7 @@ func TestExternalLoadsFail(t *testing.T) {
 		"background attribute":  {"", `<table background="https://cdn.example.com/b.png"></table>`, "https://cdn.example.com/b.png"},
 		"onerror handler":       {"", `<img src="/a.png" onerror="this.onerror=null;this.src='https://cdn.example.com/fallback.png'">`, "https://cdn.example.com/fallback.png"},
 		"onload handler":        {"", `<div ONLOAD="fetch('https://cdn.example.com/x.js')"></div>`, "https://cdn.example.com/x.js"},
+		"noscript image":        {"", `<noscript><img src="https://tracker.example.com/p.gif"></noscript>`, "https://tracker.example.com/p.gif"},
 		"style @import":         {`<style>@import "https://fonts.googleapis.com/css?family=Lato";</style>`, "", "https://fonts.googleapis.com/css?family=Lato"},
 	}
 	for name, c := range cases {

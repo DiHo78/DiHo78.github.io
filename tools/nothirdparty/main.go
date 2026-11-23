@@ -2,14 +2,14 @@
 // origin other than its own.
 //
 // Usage, from this folder: go run . <site folder> <origin>
-// It reads every .html and .svg file with an HTML parser and checks the
-// attributes that load something. In .css and .js files, inline scripts,
-// event handlers and styles, every absolute or protocol-relative URL of
-// another origin fails, comments included, unless allowlist.txt names it.
-// It prints one line per external URL and exits 1 when there is one, 2 on
-// an error. It guards
-// against accidental loads, not against HTML written to fool it, and a URL
-// that a script puts together at runtime stays unseen.
+// It reads every .html and .svg file with an HTML parser, <noscript> content
+// as markup, and checks the attributes that load something. In .css, .js and
+// .mjs files, inline scripts, event handlers and styles, every absolute or
+// protocol-relative URL of another origin fails, comments included, unless
+// allowlist.txt names it. It prints one line per external URL and exits 1
+// when there is one, 2 on an error. It guards against accidental loads, not
+// against HTML written to fool it, and a URL that a script puts together at
+// runtime stays unseen.
 package main
 
 import (
@@ -130,9 +130,9 @@ type load struct {
 }
 
 // htmlLoads parses a page or an SVG file and returns its loads in document
-// order.
+// order. With scripting off, the parser reads <noscript> content as markup.
 func htmlLoads(page string) ([]load, error) {
-	doc, err := html.Parse(strings.NewReader(page))
+	doc, err := html.ParseWithOptions(strings.NewReader(page), html.ParseOptionEnableScripting(false))
 	if err != nil {
 		return nil, err
 	}

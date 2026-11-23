@@ -1,0 +1,168 @@
+// Palette "Kohle & Stahl" (#13): a coal-black ground and sidebar, light steel
+// cards, red ember as the one bright colour. Values from palette H of the
+// colour prototype (branch prototype/colors at c6157ed, scripts/palettes.py).
+// Stack's own variables come first, then the palette's roles:
+// --palette-link / -link-hover: link text on the card,
+// --palette-glow / -glow-hover / -glow-text: the ember surface (pills,
+// link underline, heading and quote edge) and the coal-dark text on it,
+// --palette-ground-accent: ember text on the coal ground.
+
+:root {
+    --body-background: #161a1d;
+    --card-background: #f7fafd;
+    --card-background-selected: #e0e7ee;
+    --card-text-color-main: #1b2025;
+    --card-text-color-secondary: #484e53;
+    --card-text-color-tertiary: #585e64;
+    --card-separator-color: #dadfe3;
+    --body-text-color: #c6cbcf;
+    --accent-color-text: #ffffff;
+    --code-background-color: #e5e8eb;
+    --code-text-color: #363e46;
+    --blockquote-background-color: #eff4f9;
+    --tr-even-background-color: #eff4f9;
+    --table-border-color: #cdd2d6;
+    --accent-color: #364451;
+    --accent-color-darker: #24323e;
+    --link-background-color: 253, 182, 169;
+
+    --palette-link: #b83025;
+    --palette-link-hover: #a0110c;
+    --palette-glow: #f55e47;
+    --palette-glow-hover: #e34d38;
+    --palette-glow-text: #12171b;
+    --palette-ground-accent: #f55e47;
+}
+
+:root[data-scheme="dark"] {
+    --body-background: #0a0c0f;
+    --card-background: #15171a;
+    --card-background-selected: #2c2e31;
+    --card-text-color-main: #eaebed;
+    --card-text-color-secondary: #c3c4c6;
+    --card-text-color-tertiary: #a9abad;
+    --card-separator-color: #333638;
+    --body-text-color: #bcbebf;
+    --accent-color-text: #101214;
+    --code-background-color: #0d1012;
+    --code-text-color: #d2d8dd;
+    --blockquote-background-color: #27292c;
+    --tr-even-background-color: #27292c;
+    --table-border-color: #45484b;
+    --accent-color: #91a1ad;
+    --accent-color-darker: #7f8f9a;
+    --link-background-color: 136, 57, 43;
+
+    --palette-link: #fd765d;
+    --palette-link-hover: #fe9783;
+    --palette-glow: #f56249;
+    --palette-glow-hover: #e35239;
+    --palette-glow-text: #12171b;
+    --palette-ground-accent: #f56249;
+}
+
+// One colour for category and tag pills instead of Stack's hashed colours,
+// which Stack sets inline, hence !important.
+.article-category a,
+.article-tags a {
+    background-color: var(--palette-glow) !important;
+    color: var(--palette-glow-text) !important;
+
+    &:hover {
+        background-color: var(--palette-glow-hover) !important;
+    }
+}
+
+// The menu sits on the coal ground at every width. On a narrow screen Stack
+// gives it the card colour, where its ground-coloured text has no contrast.
+#main-menu {
+    background-color: var(--body-background);
+}
+
+// Stack draws the menu button in the card's text colour, dark on the coal
+// ground, and in the slate accent once the menu is open; here the ground's
+// text colour, and ember when open. The id matches Stack's selector.
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+    background-color: var(--body-text-color);
+}
+
+#toggle-menu.is-active {
+    .hamburger-inner,
+    .hamburger-inner::before,
+    .hamburger-inner::after {
+        background-color: var(--palette-ground-accent);
+    }
+}
+
+// Ember on the coal ground.
+.sidebar .site-name,
+.sidebar .site-name a,
+#main-menu li.current a,
+footer.site-footer .copyright {
+    color: var(--palette-ground-accent);
+}
+
+// Links: ember text and a solid ember underline.
+.article-content a,
+.widget a.link {
+    color: var(--palette-link);
+}
+
+.article-content a {
+    box-shadow: inset 0 -2px 0 var(--palette-glow);
+
+    &:hover {
+        color: var(--palette-link-hover);
+        box-shadow: inset 0 -4px 0 var(--palette-glow);
+    }
+}
+
+// An ember edge on headings and quotes.
+.article-content :is(h1, h2, h3, h4, h5, h6),
+.article-content blockquote {
+    border-inline-start-color: var(--palette-glow) !important;
+}
+
+// Visible keyboard focus (WCAG 2.4.7): a 3 px ring, on the ground in ember.
+:focus-visible {
+    outline: 3px solid var(--palette-link);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.sidebar :focus-visible,
+footer.site-footer :focus-visible {
+    outline-color: var(--palette-ground-accent);
+}
+
+// Code highlight: the colours of Stack's Chroma styles (monokailight, monokai)
+// that stay under 4.5:1 on the code background (#fafafa light, #272822 dark)
+// keep their OKLCH hue; lightness lowered (light) or raised (dark) to reach
+// 4.5:1, chroma reduced where needed to stay in sRGB.
+[data-scheme="light"] .chroma {
+    // keyword: #00a8c8 (2.71:1) -> 4.53:1
+    .k, .kc, .kd, .kp, .kr, .kt, .no { color: #087e97; }
+    // name: #75af00 (2.55:1) -> 4.56:1
+    .na, .nc, .nd, .ne, .nf, .nx, .gi { color: #547f04; }
+    // literal: #d88200 (2.83:1) -> 4.50:1
+    .ld, .s, .sa, .sb, .sc, .dl, .sd, .s2, .sh, .si, .sx, .sr, .s1, .ss { color: #a76405; }
+    // lineno: #7f7f7f (3.84:1) -> 4.54:1
+    .lnt, .ln { color: #737373; }
+    // number: #ae81ff (2.72:1) -> 4.55:1
+    .l, .se, .m, .mb, .mf, .mh, .mi, .il, .mo { color: #8859d4; }
+    // operator: #f92672 (3.63:1) -> 4.52:1
+    .kn, .nt, .o, .ow, .gd { color: #e30163; }
+}
+
+[data-scheme="dark"] .chroma {
+    // error: #bb0064 (2.33:1) -> 4.55:1
+    .err { color: #f54f93; }
+    // comment: #75715e (3.03:1) -> 4.51:1
+    .c, .ch, .cm, .c1, .cs, .cp, .cpf, .gu { color: #928e7a; }
+    // lineno: #7f7f7f (3.71:1) -> 4.54:1
+    .lnt, .ln { color: #8e8e8e; }
+    // operator: #f92672 (3.93:1) -> 4.51:1
+    .kn, .nt, .o, .ow, .gd { color: #fe457e; }
+}

@@ -161,25 +161,50 @@ func TestScriptFileFails(t *testing.T) {
 const re = /["']/g, path = "a//b", half = 1 / 2;
 import("https://cdn.example.com/x.js"); s.src = "https:\/\/cdn.example.com\/y.js";
 const t = ` + "`//cdn.example.com/z.js`" + `; const own = "/js/other.js", own2 = "https://diho78.github.io/a.js";
-const scheme = 'http:cdn.example.com/w.js'; // done
 `,
 	})
 	code, out, _ := check(dir)
-	want := "js/app.js: https://cdn.example.com/x.js\njs/app.js: https://cdn.example.com/y.js\njs/app.js: //cdn.example.com/z.js\njs/app.js: http:cdn.example.com/w.js\n"
+	want := "js/app.js: https://lib.example.com\njs/app.js: https://docs.example.com/x\njs/app.js: https://cdn.example.com/x.js\njs/app.js: https://cdn.example.com/y.js\njs/app.js: //cdn.example.com/z.js\n"
 	if code != 1 || out != want {
 		t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
 	}
 }
 
-func TestScriptCommentsPass(t *testing.T) {
+func TestURLInScriptCommentFails(t *testing.T) {
 	dir := site(t, map[string]string{
 		"index.html": page(`<script>/* https://cdn.example.com/a.js */ // https://cdn.example.com/b.js
-var note = "Note: x";</script>`, ""),
-		"js/lib.js": "/*!\n  * Lib 5.4.4 - https://lib.example.com\n  * (c) 2024\n  */\nfunction t(a){return a.replace(/\\/\\//g,\"/\")}export{t as default};\n",
+var note = "Note: x"; // https://photoswipe.com/x.js</script>`, ""),
+	})
+	code, out, _ := check(dir)
+	want := "index.html: https://cdn.example.com/a.js\nindex.html: https://cdn.example.com/b.js\nindex.html: https://photoswipe.com/x.js\n"
+	if code != 1 || out != want {
+		t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
+	}
+}
+
+func TestAllowlistedURLPasses(t *testing.T) {
+	dir := site(t, map[string]string{
+		"index.html": page("", ""),
+		"vendor/photoswipe/photoswipe.esm.min.js": "/*!\n  * PhotoSwipe 5.4.4 - https://photoswipe.com\n  * (c) 2024 Dmytro Semenov\n  */\nfunction t(a){return a.replace(/\\/\\//g,\"/\")}export{t as default};\n",
 	})
 	code, out, errOut := check(dir)
 	if code != 0 || out != "" || errOut != "" {
 		t.Fatalf("code %d, stdout %q, stderr %q; want 0 and no output", code, out, errOut)
+	}
+}
+
+func TestAllowlist(t *testing.T) {
+	got, err := parseAllowlist("# comment\n\nhttps://photoswipe.com  PhotoSwipe's banner comment\n")
+	if err != nil || len(got) != 1 || !got["https://photoswipe.com"] {
+		t.Fatalf("got %v, %v; want only https://photoswipe.com", got, err)
+	}
+	for _, bad := range []string{"https://photoswipe.com\n", "https://photoswipe.com   \n"} {
+		if _, err := parseAllowlist(bad); err == nil {
+			t.Errorf("%q: no error; want one for the missing reason", bad)
+		}
+	}
+	if _, err := parseAllowlist(allowlistFile); err != nil {
+		t.Fatalf("allowlist.txt: %v", err)
 	}
 }
 
@@ -220,6 +245,18 @@ func TestSVGFileFails(t *testing.T) {
 	})
 	code, out, _ := check(dir)
 	want := "img/a.svg: https://cdn.example.com/a.png\n"
+	if code != 1 || out != want {
+		t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
+	}
+}
+
+func TestURLEndsAtCommentEnd(t *testing.T) {
+	dir := site(t, map[string]string{
+		"index.html":     page("", ""),
+		"scss/style.css": "/*! @link https://lib.example.com/x*/.a{color:red}",
+	})
+	code, out, _ := check(dir)
+	want := "scss/style.css: https://lib.example.com/x\n"
 	if code != 1 || out != want {
 		t.Fatalf("code %d, stdout %q; want 1 and %q", code, out, want)
 	}

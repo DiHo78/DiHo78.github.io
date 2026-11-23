@@ -1,0 +1,7 @@
+# URLs in script and style text that pass the check, one per line:
+# the exact URL, then the reason it loads nothing.
+https://photoswipe.com  PhotoSwipe's banner comment in static/vendor/photoswipe/
+https://jimmycai.com  Stack's banner comment in its main script and stylesheet
+https://github.com/CaiJimmy/hugo-theme-stack  Stack's banner comment in its main script and stylesheet
+https://jonsuh.com/hamburgers  banner comment of the Hamburgers CSS that Stack bundles
+https://github.com/jonsuh/hamburgers  banner comment of the Hamburgers CSS that Stack bundles

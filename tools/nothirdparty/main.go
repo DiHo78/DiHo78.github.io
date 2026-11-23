@@ -3,10 +3,11 @@
 //
 // Usage, from this folder: go run . <site folder> <origin>
 // It reads every .html and .svg file with an HTML parser and checks the
-// attributes that load something. In .css and .js files, inline scripts and
-// styles, every absolute or protocol-relative URL of another origin fails,
-// comments included, unless allowlist.txt names it. It prints one line per
-// external URL and exits 1 when there is one, 2 on an error. It guards
+// attributes that load something. In .css and .js files, inline scripts,
+// event handlers and styles, every absolute or protocol-relative URL of
+// another origin fails, comments included, unless allowlist.txt names it.
+// It prints one line per external URL and exits 1 when there is one, 2 on
+// an error. It guards
 // against accidental loads, not against HTML written to fool it, and a URL
 // that a script puts together at runtime stays unseen.
 package main
@@ -173,6 +174,11 @@ func attrLoads(n *html.Node) []load {
 			}
 		case "style":
 			loads = append(loads, textLoads(a.Val)...)
+		default:
+			// An event handler such as onerror is an inline script.
+			if strings.HasPrefix(strings.ToLower(a.Key), "on") {
+				loads = append(loads, textLoads(a.Val)...)
+			}
 		}
 	}
 	return loads

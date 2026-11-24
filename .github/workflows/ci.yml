@@ -21,9 +21,11 @@ jobs:
       - name: Install Go, Hugo, Dart Sass, htmltest, Node, markdownlint-cli2
         run: sh tools/install.sh "$RUNNER_TEMP/tools" go hugo sass htmltest node markdownlint
       - name: Test the Go tools
-        run: . "$RUNNER_TEMP/tools/env.sh" && go test ./...
+        run: . "$RUNNER_TEMP/tools/env.sh" && go test ./... && go -C tools/nothirdparty test ./...
       - name: Build
         run: . "$RUNNER_TEMP/tools/env.sh" && hugo --panicOnWarning
+      - name: Check that no page loads anything from another origin
+        run: . "$RUNNER_TEMP/tools/env.sh" && go -C tools/nothirdparty run . ../../public https://diho78.github.io
       - name: Check links, images and anchors
         run: . "$RUNNER_TEMP/tools/env.sh" && htmltest
       - name: Lint the content
